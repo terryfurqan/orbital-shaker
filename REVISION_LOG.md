@@ -119,7 +119,7 @@
 
 ### [REV 5.1] - Hardware Diagnostics & Precision Pulse Benchmark (10 & 1000 Steps)
 - **Tanggal/Waktu**: 2026-09-01
-- **Status**: ✅ Kompilasi OK — Siap Uji & Upload.
+- **Status**: ✅ Kompilasi OK — ✅ Ter-upload ke Arduino Uno (`/dev/ttyACM0`) — Siap Pengujian Fisik.
 - **Latar Belakang & Diagnosis DSH Rev 5.0**:
   - *Gejala*: Saat tombol SELECT ditekan pada firmware Rev 5.0, motor bersuara/bergerak cepat sesaat tetapi langkahnya hanya sedikit lalu mati.
   - *Akar Masalah*:
