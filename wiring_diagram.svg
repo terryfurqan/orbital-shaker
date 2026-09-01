@@ -1,0 +1,565 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 980" width="100%" height="100%" style="background-color: #0b1120; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <!-- Shadow Filter -->
+    <filter id="card-shadow" x="-10%" y="-10%" width="125%" height="125%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <filter id="glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <!-- Gradients -->
+    <linearGradient id="header-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="card-grad-dark" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="arduino-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00878F"/>
+      <stop offset="100%" stop-color="#005B60"/>
+    </linearGradient>
+    <linearGradient id="lcd-screen" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#15803d"/>
+    </linearGradient>
+    <linearGradient id="heatsink-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="50%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+    <linearGradient id="motor-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#475569"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="psu-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#334155"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+
+    <!-- Marker Arrowheads -->
+    <marker id="arrow-red" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#ef4444" />
+    </marker>
+    <marker id="arrow-cyan" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrow-green" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#10b981" />
+    </marker>
+    <marker id="arrow-amber" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <!-- ================= BACKGROUND GRID ================= -->
+  <g opacity="0.08">
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#94a3b8" stroke-width="1"/>
+    </pattern>
+    <rect width="1440" height="980" fill="url(#grid)" />
+  </g>
+
+  <!-- ================= TOP TITLE BANNER ================= -->
+  <g transform="translate(40, 24)">
+    <rect width="1360" height="70" rx="14" fill="url(#header-grad)" stroke="#38bdf8" stroke-opacity="0.3" filter="url(#card-shadow)"/>
+    <text x="24" y="34" font-size="20" font-weight="800" fill="#ffffff" letter-spacing="0.02em">SKEMA WIRING LENGKAP: ARDUINO UNO + LCD SHIELD HW-555 ➔ TMC2209 ➔ NEMA 17</text>
+    <text x="24" y="55" font-size="13" font-weight="500" fill="#93c5fd">Proyek DIY Digital Orbital Shaker (Setup Tanpa Solder • Plug-and-Play via Header D2, D3, A1 • Common Ground 24V/12V/5V)</text>
+    <rect x="1190" y="20" width="145" height="30" rx="15" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="1.5"/>
+    <text x="1262" y="39" font-size="11" font-weight="700" fill="#34d399" text-anchor="middle">VERIFIED VREF 0.92V</text>
+  </g>
+
+  <!-- ====================================================================== -->
+  <!-- 1. POWER SUPPLY 24V 5A (TOP LEFT) -->
+  <!-- ====================================================================== -->
+  <g transform="translate(50, 120)" filter="url(#card-shadow)">
+    <rect width="280" height="200" rx="12" fill="url(#psu-grad)" stroke="#475569" stroke-width="1.5"/>
+    <rect x="0" y="0" width="280" height="36" rx="12" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+    <text x="14" y="24" font-size="14" font-weight="700" fill="#f8fafc">⚡ PSU SWITCHING 24V 5A</text>
+    <text x="265" y="23" font-size="11" font-weight="600" fill="#38bdf8" text-anchor="end">120 Watt</text>
+
+    <!-- Mesh Grill pattern on PSU -->
+    <g opacity="0.15" fill="#cbd5e1">
+      <circle cx="40" cy="70" r="4"/><circle cx="60" cy="70" r="4"/><circle cx="80" cy="70" r="4"/><circle cx="100" cy="70" r="4"/><circle cx="120" cy="70" r="4"/><circle cx="140" cy="70" r="4"/><circle cx="160" cy="70" r="4"/><circle cx="180" cy="70" r="4"/><circle cx="200" cy="70" r="4"/><circle cx="220" cy="70" r="4"/><circle cx="240" cy="70" r="4"/>
+      <circle cx="40" cy="90" r="4"/><circle cx="60" cy="90" r="4"/><circle cx="80" cy="90" r="4"/><circle cx="100" cy="90" r="4"/><circle cx="120" cy="90" r="4"/><circle cx="140" cy="90" r="4"/><circle cx="160" cy="90" r="4"/><circle cx="180" cy="90" r="4"/><circle cx="200" cy="90" r="4"/><circle cx="220" cy="90" r="4"/><circle cx="240" cy="90" r="4"/>
+    </g>
+
+    <!-- Screw Terminals -->
+    <g transform="translate(15, 120)">
+      <rect width="250" height="65" rx="8" fill="#090d16" stroke="#334155"/>
+      <!-- Terminal AC -->
+      <circle cx="25" cy="22" r="9" fill="#1e293b" stroke="#94a3b8" stroke-width="1.5"/><text x="25" y="26" font-size="10" font-weight="800" fill="#f8fafc" text-anchor="middle">L</text><text x="25" y="52" font-size="9" fill="#94a3b8" text-anchor="middle">220V</text>
+      <circle cx="60" cy="22" r="9" fill="#1e293b" stroke="#94a3b8" stroke-width="1.5"/><text x="60" y="26" font-size="10" font-weight="800" fill="#f8fafc" text-anchor="middle">N</text><text x="60" y="52" font-size="9" fill="#94a3b8" text-anchor="middle">Netral</text>
+      <circle cx="95" cy="22" r="9" fill="#1e293b" stroke="#94a3b8" stroke-width="1.5"/><text x="95" y="26" font-size="10" font-weight="800" fill="#f8fafc" text-anchor="middle">⏚</text><text x="95" y="52" font-size="9" fill="#94a3b8" text-anchor="middle">GND</text>
+      
+      <!-- Terminal DC -->
+      <circle cx="155" cy="22" r="11" fill="#0f172a" stroke="#ef4444" stroke-width="2"/><text x="155" y="26" font-size="11" font-weight="800" fill="#ef4444" text-anchor="middle">-V</text><text x="155" y="52" font-size="10" font-weight="700" fill="#cbd5e1" text-anchor="middle">GND</text>
+      <circle cx="215" cy="22" r="11" fill="#0f172a" stroke="#ef4444" stroke-width="2"/><text x="215" y="26" font-size="11" font-weight="800" fill="#ef4444" text-anchor="middle">+V</text><text x="215" y="52" font-size="10" font-weight="700" fill="#f87171" text-anchor="middle">+24V</text>
+    </g>
+  </g>
+
+  <!-- ====================================================================== -->
+  <!-- 2. STEP DOWN LM2596 (TOP MIDDLE) -->
+  <!-- ====================================================================== -->
+  <g transform="translate(390, 120)" filter="url(#card-shadow)">
+    <rect width="270" height="200" rx="12" fill="#134e4a" stroke="#0d9488" stroke-width="1.5"/>
+    <rect x="0" y="0" width="270" height="36" rx="12" fill="#042f2e" stroke="#0d9488" stroke-width="1"/>
+    <text x="14" y="24" font-size="14" font-weight="700" fill="#f0fdfa">🔽 STEP-DOWN LM2596</text>
+    <text x="255" y="23" font-size="11" font-weight="700" fill="#2dd4bf" text-anchor="end">OUT: 12.00V</text>
+
+    <!-- Onboard Components -->
+    <!-- Coil Inductor -->
+    <circle cx="135" cy="115" r="28" fill="#1e293b" stroke="#64748b" stroke-width="3"/>
+    <text x="135" y="119" font-size="11" font-weight="800" fill="#94a3b8" text-anchor="middle">330</text>
+    <!-- Trimpot 3296W -->
+    <rect x="70" y="55" width="45" height="32" rx="4" fill="#0284c7" stroke="#38bdf8"/>
+    <circle cx="102" cy="71" r="5" fill="#facc15"/>
+    <text x="92" y="100" font-size="9" fill="#93c5fd" font-weight="600" text-anchor="middle">Trimpot 12V</text>
+
+    <!-- Terminal IN -->
+    <g transform="translate(10, 80)">
+      <rect x="0" y="0" width="40" height="26" rx="4" fill="#090d16" stroke="#14b8a6"/>
+      <text x="20" y="17" font-size="9" font-weight="700" fill="#f87171" text-anchor="middle">IN+</text>
+      <rect x="0" y="36" width="40" height="26" rx="4" fill="#090d16" stroke="#14b8a6"/>
+      <text x="20" y="53" font-size="9" font-weight="700" fill="#94a3b8" text-anchor="middle">IN-</text>
+    </g>
+
+    <!-- Terminal OUT -->
+    <g transform="translate(220, 80)">
+      <rect x="0" y="0" width="40" height="26" rx="4" fill="#090d16" stroke="#14b8a6"/>
+      <text x="20" y="17" font-size="9" font-weight="700" fill="#facc15" text-anchor="middle">OUT+</text>
+      <rect x="0" y="36" width="40" height="26" rx="4" fill="#090d16" stroke="#14b8a6"/>
+      <text x="20" y="53" font-size="9" font-weight="700" fill="#94a3b8" text-anchor="middle">OUT-</text>
+    </g>
+    <text x="135" y="178" font-size="11" font-weight="700" fill="#a7f3d0" text-anchor="middle">Output Stabil 12.0V DC</text>
+  </g>
+
+  <!-- ====================================================================== -->
+  <!-- 3. KIPAS PENDINGIN 12V 5010 (TOP RIGHT) -->
+  <!-- ====================================================================== -->
+  <g transform="translate(715, 120)" filter="url(#card-shadow)">
+    <rect width="210" height="200" rx="12" fill="url(#card-grad-dark)" stroke="#3b82f6" stroke-width="1.5"/>
+    <rect x="0" y="0" width="210" height="36" rx="12" fill="#0f172a" stroke="#3b82f6" stroke-width="1"/>
+    <text x="14" y="24" font-size="13" font-weight="700" fill="#f8fafc">❄️ KIPAS PENDINGIN 12V</text>
+    <text x="195" y="23" font-size="10" font-weight="600" fill="#60a5fa" text-anchor="end">5010</text>
+
+    <!-- Fan Blades Graphic -->
+    <circle cx="105" cy="115" r="45" fill="#0f172a" stroke="#3b82f6" stroke-width="2"/>
+    <circle cx="105" cy="115" r="16" fill="#1e293b" stroke="#60a5fa" stroke-width="2"/>
+    <path d="M105,99 C120,80 145,95 135,115 C145,135 120,150 105,131 C90,150 65,135 75,115 C65,95 90,80 105,99 Z" fill="#2563eb" opacity="0.6"/>
+
+    <!-- Airflow Arrow -->
+    <g transform="translate(105, 172)">
+      <text x="0" y="14" font-size="10" font-weight="700" fill="#38bdf8" text-anchor="middle">TIUPAN KE HEATSINK TMC2209 ➔</text>
+    </g>
+  </g>
+
+  <!-- ====================================================================== -->
+  <!-- 4. ARDUINO UNO + LCD KEYPAD SHIELD HW-555 (BOTTOM LEFT) -->
+  <!-- ====================================================================== -->
+  <g transform="translate(50, 370)" filter="url(#card-shadow)">
+    <!-- Board Body -->
+    <rect width="520" height="560" rx="16" fill="url(#card-grad-dark)" stroke="#0284c7" stroke-width="2"/>
+    
+    <!-- Header Bar -->
+    <rect x="0" y="0" width="520" height="42" rx="16" fill="url(#header-grad)"/>
+    <text x="18" y="27" font-size="15" font-weight="800" fill="#ffffff">ARDUINO UNO R3 + LCD KEYPAD SHIELD HW-555</text>
+    <text x="500" y="26" font-size="11" font-weight="600" fill="#38bdf8" text-anchor="end">Main Controller</text>
+
+    <!-- LCD 1602 Display Screen Module -->
+    <g transform="translate(40, 60)">
+      <rect width="440" height="150" rx="10" fill="#064e3b" stroke="#059669" stroke-width="3"/>
+      <!-- Screen Bezel -->
+      <rect x="30" y="20" width="380" height="110" rx="6" fill="url(#lcd-screen)" stroke="#166534" stroke-width="2"/>
+      
+      <!-- LCD Text Lines -->
+      <text x="45" y="60" font-family="'JetBrains Mono', monospace" font-size="22" font-weight="800" fill="#052e16" letter-spacing="0.08em">RPM:120  STANDBY</text>
+      <text x="45" y="102" font-family="'JetBrains Mono', monospace" font-size="22" font-weight="800" fill="#052e16" letter-spacing="0.08em">JAM  05:57:42 WIB</text>
+    </g>
+
+    <!-- Contrast Trimpot Potentiometer -->
+    <g transform="translate(40, 225)">
+      <rect width="36" height="36" rx="4" fill="#0284c7" stroke="#38bdf8" stroke-width="1.5"/>
+      <circle cx="18" cy="18" r="8" fill="#facc15"/>
+      <line x1="12" y1="18" x2="24" y2="18" stroke="#713f12" stroke-width="2.5"/>
+      <text x="45" y="22" font-size="11" font-weight="700" fill="#93c5fd">Trimpot Kontras LCD</text>
+      <text x="45" y="34" font-size="9" fill="#64748b">(Putar jika teks buram)</text>
+    </g>
+
+    <!-- 5 Tactile Navigation Buttons -->
+    <g transform="translate(190, 225)">
+      <!-- RIGHT -->
+      <circle cx="30" cy="18" r="14" fill="#334155" stroke="#94a3b8" stroke-width="1.5"/>
+      <text x="30" y="22" font-size="9" font-weight="800" fill="#ffffff" text-anchor="middle">RGT</text>
+      <!-- UP -->
+      <circle cx="75" cy="18" r="14" fill="#0284c7" stroke="#38bdf8" stroke-width="2"/>
+      <text x="75" y="22" font-size="10" font-weight="800" fill="#ffffff" text-anchor="middle">UP</text>
+      <!-- DOWN -->
+      <circle cx="120" cy="18" r="14" fill="#0284c7" stroke="#38bdf8" stroke-width="2"/>
+      <text x="120" y="22" font-size="9" font-weight="800" fill="#ffffff" text-anchor="middle">DWN</text>
+      <!-- LEFT -->
+      <circle cx="165" cy="18" r="14" fill="#334155" stroke="#94a3b8" stroke-width="1.5"/>
+      <text x="165" y="22" font-size="9" font-weight="800" fill="#ffffff" text-anchor="middle">LFT</text>
+      <!-- SELECT -->
+      <circle cx="225" cy="18" r="16" fill="#10b981" stroke="#34d399" stroke-width="2"/>
+      <text x="225" y="22" font-size="9" font-weight="800" fill="#ffffff" text-anchor="middle">SEL</text>
+      
+      <text x="75" y="44" font-size="9" font-weight="700" fill="#38bdf8" text-anchor="middle">+RPM</text>
+      <text x="120" y="44" font-size="9" font-weight="700" fill="#38bdf8" text-anchor="middle">-RPM</text>
+      <text x="225" y="46" font-size="10" font-weight="800" fill="#34d399" text-anchor="middle">START/STOP</text>
+    </g>
+
+    <!-- ================= PIN HEADERS ON SHIELD ================= -->
+    <!-- RIGHT SIDE DIGITAL HEADER -->
+    <g transform="translate(20, 285)">
+      <rect width="480" height="95" rx="8" fill="#090d16" stroke="#334155"/>
+      <text x="12" y="20" font-size="11" font-weight="800" fill="#94a3b8">DERETAN HEADER PIN DIGITAL (SISI KANAN SHIELD)</text>
+      
+      <!-- Pin Icons & Labels -->
+      <!-- D0 (RX) -->
+      <g transform="translate(30, 35)">
+        <circle cx="12" cy="12" r="10" fill="#1e293b" stroke="#64748b"/>
+        <text x="12" y="16" font-size="9" font-weight="700" fill="#94a3b8" text-anchor="middle">0</text>
+        <text x="12" y="38" font-size="8" fill="#64748b" text-anchor="middle">RX</text>
+      </g>
+      <!-- D1 (TX) -->
+      <g transform="translate(75, 35)">
+        <circle cx="12" cy="12" r="10" fill="#1e293b" stroke="#64748b"/>
+        <text x="12" y="16" font-size="9" font-weight="700" fill="#94a3b8" text-anchor="middle">1</text>
+        <text x="12" y="38" font-size="8" fill="#64748b" text-anchor="middle">TX</text>
+      </g>
+
+      <!-- PIN D2 (STEP) - HIGHLIGHTED -->
+      <g transform="translate(130, 30)">
+        <rect x="-6" y="-6" width="36" height="52" rx="6" fill="#0284c7" fill-opacity="0.2" stroke="#38bdf8" stroke-width="1.5"/>
+        <circle cx="12" cy="12" r="12" fill="#0284c7" stroke="#38bdf8" stroke-width="2" filter="url(#glow-cyan)"/>
+        <text x="12" y="17" font-size="12" font-weight="800" fill="#ffffff" text-anchor="middle">2</text>
+        <text x="12" y="38" font-size="10" font-weight="800" fill="#38bdf8" text-anchor="middle">D2</text>
+        <text x="12" y="52" font-size="9" font-weight="800" fill="#38bdf8" text-anchor="middle">➔ STEP</text>
+      </g>
+
+      <!-- PIN D3 (DIR) - HIGHLIGHTED -->
+      <g transform="translate(200, 30)">
+        <rect x="-6" y="-6" width="36" height="52" rx="6" fill="#059669" fill-opacity="0.2" stroke="#34d399" stroke-width="1.5"/>
+        <circle cx="12" cy="12" r="12" fill="#059669" stroke="#34d399" stroke-width="2" filter="url(#glow-cyan)"/>
+        <text x="12" y="17" font-size="12" font-weight="800" fill="#ffffff" text-anchor="middle">3</text>
+        <text x="12" y="38" font-size="10" font-weight="800" fill="#34d399" text-anchor="middle">D3</text>
+        <text x="12" y="52" font-size="9" font-weight="800" fill="#34d399" text-anchor="middle">➔ DIR</text>
+      </g>
+
+      <!-- D4 - D7 (Used by LCD) -->
+      <g transform="translate(270, 35)">
+        <circle cx="12" cy="12" r="10" fill="#1e293b" stroke="#475569"/>
+        <text x="12" y="16" font-size="9" fill="#64748b" text-anchor="middle">4</text>
+        <circle cx="45" cy="12" r="10" fill="#1e293b" stroke="#475569"/>
+        <text x="45" y="16" font-size="9" fill="#64748b" text-anchor="middle">5</text>
+        <circle cx="78" cy="12" r="10" fill="#1e293b" stroke="#475569"/>
+        <text x="78" y="16" font-size="9" fill="#64748b" text-anchor="middle">6</text>
+        <circle cx="111" cy="12" r="10" fill="#1e293b" stroke="#475569"/>
+        <text x="111" y="16" font-size="9" fill="#64748b" text-anchor="middle">7</text>
+        <text x="62" y="38" font-size="9" fill="#64748b" text-anchor="middle">(D4–D7 dipakai internal LCD Shield)</text>
+      </g>
+    </g>
+
+    <!-- ANALOG & POWER HEADER BREAKOUT (BOTTOM) -->
+    <g transform="translate(20, 395)">
+      <rect width="480" height="145" rx="8" fill="#090d16" stroke="#334155"/>
+      <text x="12" y="20" font-size="11" font-weight="800" fill="#94a3b8">DERETAN HEADER ANALOG &amp; POWER (JARUM TONGOL READY)</text>
+
+      <!-- PIN A0 (Used by Buttons) -->
+      <g transform="translate(30, 40)">
+        <circle cx="12" cy="12" r="10" fill="#1e293b" stroke="#64748b"/>
+        <text x="12" y="16" font-size="9" fill="#64748b" text-anchor="middle">A0</text>
+        <text x="12" y="38" font-size="8" fill="#64748b" text-anchor="middle">Keypad</text>
+      </g>
+
+      <!-- PIN A1 (ENABLE MOTOR) - HIGHLIGHTED -->
+      <g transform="translate(90, 32)">
+        <rect x="-6" y="-6" width="46" height="60" rx="6" fill="#d97706" fill-opacity="0.2" stroke="#f59e0b" stroke-width="1.5"/>
+        <circle cx="17" cy="15" r="13" fill="#d97706" stroke="#fbbf24" stroke-width="2"/>
+        <text x="17" y="20" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">A1</text>
+        <text x="17" y="44" font-size="10" font-weight="800" fill="#fbbf24" text-anchor="middle">PIN A1</text>
+        <text x="17" y="60" font-size="9" font-weight="800" fill="#fbbf24" text-anchor="middle">➔ EN</text>
+      </g>
+
+      <!-- PIN 5V LOGIC - HIGHLIGHTED -->
+      <g transform="translate(180, 32)">
+        <rect x="-6" y="-6" width="46" height="60" rx="6" fill="#dc2626" fill-opacity="0.2" stroke="#ef4444" stroke-width="1.5"/>
+        <circle cx="17" cy="15" r="13" fill="#dc2626" stroke="#f87171" stroke-width="2"/>
+        <text x="17" y="20" font-size="10" font-weight="800" fill="#ffffff" text-anchor="middle">5V</text>
+        <text x="17" y="44" font-size="10" font-weight="800" fill="#f87171" text-anchor="middle">+5V</text>
+        <text x="17" y="60" font-size="9" font-weight="800" fill="#f87171" text-anchor="middle">➔ VDD</text>
+      </g>
+
+      <!-- PIN GND LOGIC - HIGHLIGHTED -->
+      <g transform="translate(270, 32)">
+        <rect x="-6" y="-6" width="46" height="60" rx="6" fill="#1e293b" stroke="#94a3b8" stroke-width="1.5"/>
+        <circle cx="17" cy="15" r="13" fill="#0f172a" stroke="#cbd5e1" stroke-width="2"/>
+        <text x="17" y="20" font-size="9" font-weight="800" fill="#ffffff" text-anchor="middle">GND</text>
+        <text x="17" y="44" font-size="10" font-weight="800" fill="#cbd5e1" text-anchor="middle">GND</text>
+        <text x="17" y="60" font-size="9" font-weight="800" fill="#cbd5e1" text-anchor="middle">➔ GND</text>
+      </g>
+
+      <!-- PIN VIN (12V IN FROM STEP DOWN) -->
+      <g transform="translate(360, 32)">
+        <rect x="-6" y="-6" width="46" height="60" rx="6" fill="#78350f" stroke="#d97706" stroke-width="1.5"/>
+        <circle cx="17" cy="15" r="13" fill="#b45309" stroke="#fde68a" stroke-width="2"/>
+        <text x="17" y="20" font-size="9" font-weight="800" fill="#ffffff" text-anchor="middle">VIN</text>
+        <text x="17" y="44" font-size="10" font-weight="800" fill="#fde68a" text-anchor="middle">VIN</text>
+        <text x="17" y="60" font-size="9" font-weight="800" fill="#fde68a" text-anchor="middle">12V IN</text>
+      </g>
+
+      <text x="240" y="128" font-size="11" font-weight="600" fill="#38bdf8" text-anchor="middle">⚡ Bebas Solder: Gunakan kabel jumper Dupont Male-to-Female</text>
+    </g>
+  </g>
+
+  <!-- ====================================================================== -->
+  <!-- 5. DRIVER MKS TMC2209 V2.0 (CENTER RIGHT) -->
+  <!-- ====================================================================== -->
+  <g transform="translate(640, 370)" filter="url(#card-shadow)">
+    <!-- PCB Board -->
+    <rect width="360" height="560" rx="16" fill="url(#card-grad-dark)" stroke="#38bdf8" stroke-width="2"/>
+    
+    <!-- Header Bar -->
+    <rect x="0" y="0" width="360" height="42" rx="16" fill="url(#header-grad)"/>
+    <text x="18" y="27" font-size="15" font-weight="800" fill="#ffffff">MKS TMC2209 V2.0 SILENT DRIVER</text>
+    <text x="340" y="26" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="end">StealthChop2</text>
+
+    <!-- Aluminium Blue Heatsink Graphic -->
+    <g transform="translate(100, 65)">
+      <rect width="160" height="110" rx="8" fill="url(#heatsink-grad)" stroke="#38bdf8" stroke-width="2"/>
+      <!-- Fins -->
+      <line x1="25" y1="10" x2="25" y2="100" stroke="#0f172a" stroke-width="4"/>
+      <line x1="50" y1="10" x2="50" y2="100" stroke="#0f172a" stroke-width="4"/>
+      <line x1="75" y1="10" x2="75" y2="100" stroke="#0f172a" stroke-width="4"/>
+      <line x1="100" y1="10" x2="100" y2="100" stroke="#0f172a" stroke-width="4"/>
+      <line x1="125" y1="10" x2="125" y2="100" stroke="#0f172a" stroke-width="4"/>
+      <line x1="145" y1="10" x2="145" y2="100" stroke="#0f172a" stroke-width="3"/>
+      <text x="80" y="60" font-size="12" font-weight="800" fill="#ffffff" text-anchor="middle" filter="url(#glow-cyan)">HEATSINK</text>
+      <text x="80" y="78" font-size="10" font-weight="700" fill="#e0f2fe" text-anchor="middle">ALUMINIUM</text>
+    </g>
+
+    <!-- Vref Trimpot Onboard -->
+    <g transform="translate(135, 190)">
+      <circle cx="45" cy="20" r="18" fill="#334155" stroke="#facc15" stroke-width="2"/>
+      <line x1="33" y1="20" x2="57" y2="20" stroke="#facc15" stroke-width="3"/>
+      <text x="45" y="54" font-size="11" font-weight="800" fill="#facc15" text-anchor="middle">VREF = 0.92V DC</text>
+      <text x="45" y="68" font-size="9" fill="#94a3b8" text-anchor="middle">(Torsi Mantap ~0.76A RMS)</text>
+    </g>
+
+    <!-- LEFT PIN ROW (LOGIC SIDE) -->
+    <g transform="translate(20, 275)">
+      <rect width="140" height="260" rx="8" fill="#090d16" stroke="#334155"/>
+      <text x="70" y="20" font-size="11" font-weight="800" fill="#94a3b8" text-anchor="middle">LOGIC PINS</text>
+
+      <!-- EN Pin (Row 1) -->
+      <g transform="translate(15, 35)">
+        <rect width="110" height="32" rx="6" fill="#78350f" stroke="#f59e0b" stroke-width="1.5"/>
+        <text x="14" y="21" font-size="12" font-weight="800" fill="#fde68a">EN</text>
+        <text x="95" y="21" font-size="10" font-weight="700" fill="#fde68a" text-anchor="end">➔ Pin A1</text>
+      </g>
+      <!-- MS1, MS2 -->
+      <g transform="translate(15, 75)">
+        <rect width="110" height="24" rx="4" fill="#1e293b"/>
+        <text x="14" y="16" font-size="10" fill="#94a3b8">MS1 / MS2</text>
+      </g>
+      <!-- STEP Pin -->
+      <g transform="translate(15, 110)">
+        <rect width="110" height="36" rx="6" fill="#0369a1" stroke="#38bdf8" stroke-width="2"/>
+        <text x="14" y="23" font-size="13" font-weight="800" fill="#ffffff">STEP</text>
+        <text x="95" y="23" font-size="11" font-weight="800" fill="#38bdf8" text-anchor="end">➔ Pin D2</text>
+      </g>
+      <!-- DIR Pin -->
+      <g transform="translate(15, 155)">
+        <rect width="110" height="36" rx="6" fill="#065f46" stroke="#34d399" stroke-width="2"/>
+        <text x="14" y="23" font-size="13" font-weight="800" fill="#ffffff">DIR</text>
+        <text x="95" y="23" font-size="11" font-weight="800" fill="#34d399" text-anchor="end">➔ Pin D3</text>
+      </g>
+      <!-- VDD & GND -->
+      <g transform="translate(15, 200)">
+        <rect width="110" height="46" rx="6" fill="#1e293b" stroke="#475569"/>
+        <text x="14" y="18" font-size="11" font-weight="800" fill="#f87171">VDD (5V)</text>
+        <text x="14" y="36" font-size="11" font-weight="800" fill="#cbd5e1">GND (0V)</text>
+      </g>
+    </g>
+
+    <!-- RIGHT PIN ROW (POWER & MOTOR SIDE) -->
+    <g transform="translate(200, 275)">
+      <rect width="140" height="260" rx="8" fill="#090d16" stroke="#334155"/>
+      <text x="70" y="20" font-size="11" font-weight="800" fill="#94a3b8" text-anchor="middle">MOTOR &amp; POWER</text>
+
+      <!-- VMOT (24V) & GND -->
+      <g transform="translate(15, 35)">
+        <rect width="110" height="48" rx="6" fill="#7f1d1d" stroke="#ef4444" stroke-width="2"/>
+        <text x="14" y="20" font-size="12" font-weight="800" fill="#fecaca">VMOT (+24V)</text>
+        <text x="14" y="38" font-size="11" font-weight="700" fill="#cbd5e1">GND (Power)</text>
+      </g>
+
+      <!-- 4 Motor Coil Outputs -->
+      <g transform="translate(15, 95)">
+        <rect width="110" height="150" rx="6" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="55" y="20" font-size="10" font-weight="800" fill="#93c5fd" text-anchor="middle">COIL OUTPUT</text>
+        
+        <!-- 2B -->
+        <rect x="8" y="28" width="94" height="24" rx="4" fill="#0f172a" stroke="#64748b"/>
+        <text x="16" y="44" font-size="11" font-weight="800" fill="#94a3b8">2B (Hitam)</text>
+        <!-- 2A -->
+        <rect x="8" y="58" width="94" height="24" rx="4" fill="#0f172a" stroke="#10b981"/>
+        <text x="16" y="74" font-size="11" font-weight="800" fill="#34d399">2A (Hijau)</text>
+        <!-- 1A -->
+        <rect x="8" y="88" width="94" height="24" rx="4" fill="#0f172a" stroke="#ef4444"/>
+        <text x="16" y="104" font-size="11" font-weight="800" fill="#f87171">1A (Merah)</text>
+        <!-- 1B -->
+        <rect x="8" y="118" width="94" height="24" rx="4" fill="#0f172a" stroke="#38bdf8"/>
+        <text x="16" y="134" font-size="11" font-weight="800" fill="#60a5fa">1B (Biru)</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ====================================================================== -->
+  <!-- 6. MOTOR STEPPER NEMA 17 (FAR RIGHT) -->
+  <!-- ====================================================================== -->
+  <g transform="translate(1080, 440)" filter="url(#card-shadow)">
+    <!-- Motor Body -->
+    <rect width="300" height="420" rx="16" fill="url(#motor-grad)" stroke="#64748b" stroke-width="2"/>
+    <rect x="0" y="0" width="300" height="42" rx="16" fill="#0f172a" stroke="#64748b" stroke-width="1"/>
+    <text x="18" y="27" font-size="15" font-weight="800" fill="#ffffff">NEMA 17 (17HS4401)</text>
+    <text x="285" y="26" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="end">1.5A • 42 N·cm</text>
+
+    <!-- Motor Face Plate & D-Shaft -->
+    <g transform="translate(90, 65)">
+      <circle cx="60" cy="60" r="55" fill="#334155" stroke="#94a3b8" stroke-width="3"/>
+      <!-- D-Shaft -->
+      <circle cx="60" cy="60" r="16" fill="#cbd5e1" stroke="#475569" stroke-width="2"/>
+      <path d="M72,48 L72,72" stroke="#1e293b" stroke-width="4"/>
+      <text x="60" y="135" font-size="11" font-weight="700" fill="#e2e8f0" text-anchor="middle">Poros D-Shaft 5mm</text>
+      <text x="60" y="150" font-size="9" fill="#94a3b8" text-anchor="middle">(Pasang Pulley GT2 20T)</text>
+    </g>
+
+    <!-- 4-Pin Terminal Connector -->
+    <g transform="translate(30, 245)">
+      <rect width="240" height="150" rx="10" fill="#090d16" stroke="#334155"/>
+      <text x="120" y="24" font-size="12" font-weight="800" fill="#f8fafc" text-anchor="middle">4-PIN JST XH CONNECTOR</text>
+
+      <!-- Pin 1: Hitam -->
+      <g transform="translate(20, 40)">
+        <circle cx="15" cy="12" r="10" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
+        <text x="40" y="16" font-size="11" font-weight="700" fill="#cbd5e1">Pin 1: Hitam (Fasa A+)</text>
+      </g>
+      <!-- Pin 2: Hijau -->
+      <g transform="translate(20, 68)">
+        <circle cx="15" cy="12" r="10" fill="#065f46" stroke="#10b981" stroke-width="2"/>
+        <text x="40" y="16" font-size="11" font-weight="700" fill="#34d399">Pin 2: Hijau (Fasa A-)</text>
+      </g>
+      <!-- Pin 3: Merah -->
+      <g transform="translate(20, 96)">
+        <circle cx="15" cy="12" r="10" fill="#7f1d1d" stroke="#ef4444" stroke-width="2"/>
+        <text x="40" y="16" font-size="11" font-weight="700" fill="#f87171">Pin 3: Merah (Fasa B+)</text>
+      </g>
+      <!-- Pin 4: Biru -->
+      <g transform="translate(20, 124)">
+        <circle cx="15" cy="12" r="10" fill="#0369a1" stroke="#38bdf8" stroke-width="2"/>
+        <text x="40" y="16" font-size="11" font-weight="700" fill="#60a5fa">Pin 4: Biru (Fasa B-)</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ====================================================================== -->
+  <!-- WIRE ROUTING (HIGH VISIBILITY BEZIER CURVES) -->
+  <!-- ====================================================================== -->
+
+  <!-- 1. JALUR DAYA 24V (PSU +V ➔ LM2596 IN+ & TMC2209 VMOT) -->
+  <!-- PSU +V to LM2596 IN+ -->
+  <path d="M 280,262 C 330,262 350,200 400,200" fill="none" stroke="#ef4444" stroke-width="4" stroke-linecap="round"/>
+  <!-- PSU +V to TMC2209 VMOT -->
+  <path d="M 280,262 C 340,262 760,260 855,420" fill="none" stroke="#ef4444" stroke-width="4" stroke-linecap="round" stroke-dasharray="8 4"/>
+  <rect x="520" y="320" width="90" height="22" rx="4" fill="#7f1d1d" stroke="#ef4444"/>
+  <text x="565" y="335" font-size="10" font-weight="800" fill="#fee2e2" text-anchor="middle">+24V VMOT</text>
+
+  <!-- 2. JALUR GROUND 0V (COMMON GROUND BUS) -->
+  <!-- PSU -V to LM2596 IN- -->
+  <path d="M 220,262 C 260,280 340,240 400,240" fill="none" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
+  <!-- PSU -V to TMC2209 GND -->
+  <path d="M 220,262 C 250,340 780,340 855,440" fill="none" stroke="#64748b" stroke-width="4" stroke-linecap="round" stroke-dasharray="8 4"/>
+
+  <!-- 3. JALUR 12V DARI LM2596 KE KIPAS & ARDUINO VIN -->
+  <!-- LM2596 OUT+ (12V) to Kipas (+) -->
+  <path d="M 650,200 C 680,200 680,180 725,180" fill="none" stroke="#facc15" stroke-width="3.5" stroke-linecap="round"/>
+  <!-- LM2596 OUT- (GND) to Kipas (-) -->
+  <path d="M 650,240 C 680,240 680,210 725,210" fill="none" stroke="#64748b" stroke-width="3" stroke-linecap="round"/>
+  <!-- LM2596 OUT+ (12V) to Arduino VIN -->
+  <path d="M 650,200 C 670,200 480,720 430,810" fill="none" stroke="#facc15" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 3"/>
+  <rect x="470" y="730" width="85" height="20" rx="4" fill="#78350f" stroke="#facc15"/>
+  <text x="512" y="744" font-size="9" font-weight="800" fill="#fef08a" text-anchor="middle">12V KE VIN UNO</text>
+
+  <!-- 4. JALUR KONTROL MIKRO (ARDUINO ➔ TMC2209) -->
+
+  <!-- STEP: Pin D2 ➔ TMC2209 STEP (CYAN WIRE) -->
+  <path d="M 192,685 C 240,685 580,500 655,500" fill="none" stroke="#0284c7" stroke-width="4" stroke-linecap="round" filter="url(#glow-cyan)"/>
+  <path d="M 192,685 C 240,685 580,500 655,500" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="192" cy="685" r="5" fill="#38bdf8"/>
+  <circle cx="655" cy="500" r="5" fill="#38bdf8"/>
+  <!-- Label Badge -->
+  <rect x="360" y="550" width="120" height="24" rx="6" fill="#0369a1" stroke="#38bdf8"/>
+  <text x="420" y="566" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">D2 ➔ PULSA STEP</text>
+
+  <!-- DIR: Pin D3 ➔ TMC2209 DIR (GREEN WIRE) -->
+  <path d="M 262,685 C 300,685 580,545 655,545" fill="none" stroke="#059669" stroke-width="4" stroke-linecap="round" filter="url(#glow-cyan)"/>
+  <path d="M 262,685 C 300,685 580,545 655,545" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="262" cy="685" r="5" fill="#34d399"/>
+  <circle cx="655" cy="545" r="5" fill="#34d399"/>
+  <!-- Label Badge -->
+  <rect x="360" y="590" width="120" height="24" rx="6" fill="#065f46" stroke="#34d399"/>
+  <text x="420" y="606" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">D3 ➔ ARAH DIR</text>
+
+  <!-- EN: Pin A1 ➔ TMC2209 EN (AMBER/ORANGE WIRE) -->
+  <path d="M 157,815 C 220,815 580,425 655,425" fill="none" stroke="#d97706" stroke-width="4" stroke-linecap="round"/>
+  <path d="M 157,815 C 220,815 580,425 655,425" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="157" cy="815" r="5" fill="#fbbf24"/>
+  <circle cx="655" cy="425" r="5" fill="#fbbf24"/>
+  <!-- Label Badge -->
+  <rect x="360" y="630" width="130" height="24" rx="6" fill="#78350f" stroke="#f59e0b"/>
+  <text x="425" y="646" font-size="11" font-weight="800" fill="#fde68a" text-anchor="middle">A1 ➔ ENABLE (EN)</text>
+
+  <!-- 5V VDD: Arduino 5V ➔ TMC2209 VDD -->
+  <path d="M 247,815 C 320,815 580,490 655,490" fill="none" stroke="#dc2626" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="247" cy="815" r="4" fill="#f87171"/>
+  <circle cx="655" cy="490" r="4" fill="#f87171"/>
+
+  <!-- GND LOGIC: Arduino GND ➔ TMC2209 Logic GND -->
+  <path d="M 337,815 C 380,815 580,510 655,510" fill="none" stroke="#64748b" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="337" cy="815" r="4" fill="#cbd5e1"/>
+  <circle cx="655" cy="510" r="4" fill="#cbd5e1"/>
+
+  <!-- 5. JALUR MOTOR STEPPER (TMC2209 ➔ NEMA 17) -->
+  <!-- 2B: Hitam -->
+  <path d="M 945,410 C 990,410 1020,535 1100,535" fill="none" stroke="#1e293b" stroke-width="5" stroke-linecap="round"/>
+  <path d="M 945,410 C 990,410 1020,535 1100,535" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>
+  <!-- 2A: Hijau -->
+  <path d="M 945,440 C 990,440 1020,565 1100,565" fill="none" stroke="#10b981" stroke-width="3.5" stroke-linecap="round"/>
+  <!-- 1A: Merah -->
+  <path d="M 945,470 C 990,470 1020,595 1100,595" fill="none" stroke="#ef4444" stroke-width="3.5" stroke-linecap="round"/>
+  <!-- 1B: Biru -->
+  <path d="M 945,500 C 990,500 1020,625 1100,625" fill="none" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- Stepper Cable Bundle Tag -->
+  <rect x="975" y="475" width="85" height="42" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="1017" y="493" font-size="10" font-weight="800" fill="#38bdf8" text-anchor="middle">KABEL 4-PIN</text>
+  <text x="1017" y="508" font-size="9" font-weight="700" fill="#94a3b8" text-anchor="middle">NEMA 17</text>
+
+  <!-- ================= FOOTER / LEGEND ================= -->
+  <g transform="translate(40, 935)">
+    <rect width="1360" height="35" rx="8" fill="#0f172a" stroke="#1e293b"/>
+    <text x="20" y="22" font-size="11" font-weight="700" fill="#94a3b8">KETERANGAN WARNA KABEL:</text>
+    <rect x="210" y="12" width="14" height="14" rx="3" fill="#38bdf8"/><text x="232" y="23" font-size="11" fill="#cbd5e1">D2 Step Pulse</text>
+    <rect x="340" y="12" width="14" height="14" rx="3" fill="#34d399"/><text x="362" y="23" font-size="11" fill="#cbd5e1">D3 Direction</text>
+    <rect x="470" y="12" width="14" height="14" rx="3" fill="#fbbf24"/><text x="492" y="23" font-size="11" fill="#cbd5e1">A1 Motor Enable</text>
+    <rect x="620" y="12" width="14" height="14" rx="3" fill="#ef4444"/><text x="642" y="23" font-size="11" fill="#cbd5e1">+24V DC Power</text>
+    <rect x="760" y="12" width="14" height="14" rx="3" fill="#facc15"/><text x="782" y="23" font-size="11" fill="#cbd5e1">+12V DC Step-Down</text>
+    <rect x="910" y="12" width="14" height="14" rx="3" fill="#64748b"/><text x="932" y="23" font-size="11" fill="#cbd5e1">Common Ground (0V)</text>
+    <text x="1340" y="22" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="end">DIY Orbital Shaker V2.0</text>
+  </g>
+</svg>

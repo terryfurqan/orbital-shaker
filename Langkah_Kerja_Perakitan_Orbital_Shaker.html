@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panduan Langkah Kerja Perakitan DIY Digital Orbital Shaker</title>
+  <!-- KaTeX for crisp math rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+    :root {
+      --primary: #0284c7;
+      --primary-light: #e0f2fe;
+      --primary-dark: #0369a1;
+      --accent: #38bdf8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --slate-900: #0f172a;
+      --slate-800: #1e293b;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-300: #cbd5e1;
+      --slate-100: #f1f5f9;
+      --slate-50: #f8fafc;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+      line-height: 1.65;
+      padding: 24px;
+    }
+
+    .master-wrapper {
+      max-width: 980px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e2e8f0;
+    }
+
+    /* Print & PDF Paged Media Rules */
+    @page {
+      size: A4 portrait;
+      margin: 14mm 14mm 16mm 14mm;
+    }
+
+    @media print {
+      body {
+        background-color: #ffffff !important;
+        padding: 0 !important;
+      }
+      .master-wrapper {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+      .avoid-break {
+        page-break-inside: avoid;
+      }
+      .section-card, .table-responsive, .ascii-block, .alert-box, .formula-card {
+        page-break-inside: avoid;
+      }
+    }
+
+    /* Cover / Document Header */
+    .doc-cover {
+      background: linear-gradient(135deg, #0f172a 0%, #0369a1 100%);
+      color: #ffffff;
+      padding: 36px 32px;
+      border-radius: 14px;
+      margin-bottom: 32px;
+      box-shadow: 0 12px 24px -6px rgba(2, 132, 199, 0.3);
+    }
+
+    .doc-cover-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(56, 189, 248, 0.2);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      padding: 4px 14px;
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
+    }
+
+    .doc-cover h1 {
+      font-size: 2.1rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      margin-bottom: 12px;
+      color: #ffffff;
+    }
+
+    .doc-cover-desc {
+      font-size: 1rem;
+      color: #cbd5e1;
+      max-width: 800px;
+      margin-bottom: 20px;
+    }
+
+    .doc-metadata-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      font-size: 0.85rem;
+    }
+
+    .meta-item strong {
+      display: block;
+      color: #38bdf8;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .meta-item span {
+      color: #f8fafc;
+      font-weight: 600;
+    }
+
+    /* Table of Contents & Roadmap */
+    .toc-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+
+    .toc-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+    }
+
+    .toc-link-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 14px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #334155;
+      font-size: 0.88rem;
+      transition: all 0.2s;
+    }
+
+    .toc-link-item:hover {
+      border-color: #0284c7;
+      background: #f0f9ff;
+      color: #0284c7;
+    }
+
+    .toc-num {
+      background: #0284c7;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.75rem;
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* Section & Cards */
+    .section-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 28px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    .section-header-box {
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 14px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-badge-num {
+      background: #0284c7;
+      color: #ffffff;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0;
+    }
+
+    .sub-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #0369a1;
+      margin: 22px 0 10px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    p {
+      color: #334155;
+      font-size: 0.94rem;
+      margin-bottom: 14px;
+      line-height: 1.7;
+    }
+
+    /* Alert / Callout Boxes */
+    .alert-box {
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin: 16px 0;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+
+    .alert-danger {
+      background: #fef2f2;
+      border-left: 4px solid #ef4444;
+      color: #991b1b;
+      border-top: 1px solid #fee2e2;
+      border-right: 1px solid #fee2e2;
+      border-bottom: 1px solid #fee2e2;
+    }
+    .alert-danger strong { color: #b91c1c; }
+
+    .alert-warning {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      color: #92400e;
+      border-top: 1px solid #fef3c7;
+      border-right: 1px solid #fef3c7;
+      border-bottom: 1px solid #fef3c7;
+    }
+    .alert-warning strong { color: #b45309; }
+
+    .alert-info {
+      background: #f0f9ff;
+      border-left: 4px solid #0284c7;
+      color: #075985;
+      border-top: 1px solid #e0f2fe;
+      border-right: 1px solid #e0f2fe;
+      border-bottom: 1px solid #e0f2fe;
+    }
+    .alert-info strong { color: #0369a1; }
+
+    .alert-success {
+      background: #ecfdf5;
+      border-left: 4px solid #10b981;
+      color: #065f46;
+      border-top: 1px solid #d1fae5;
+      border-right: 1px solid #d1fae5;
+      border-bottom: 1px solid #d1fae5;
+    }
+    .alert-success strong { color: #047857; }
+
+    /* Code & ASCII blocks */
+    .ascii-block, pre.code-block {
+      background: #0f172a;
+      color: #38bdf8;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 16px 20px;
+      font-family: 'JetBrains Mono', Consolas, Monaco, monospace;
+      font-size: 0.83rem;
+      line-height: 1.45;
+      overflow-x: auto;
+      margin: 16px 0;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+    }
+
+    code.inline-code {
+      background: #f1f5f9;
+      color: #0284c7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.86em;
+      border: 1px solid #e2e8f0;
+      font-weight: 600;
+    }
+
+    .formula-card {
+      background: #f0fdf4;
+      border-left: 4px solid #10b981;
+      border-radius: 0 10px 10px 0;
+      padding: 16px 20px;
+      margin: 16px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      color: #065f46;
+      border-top: 1px solid #dcfce7;
+      border-right: 1px solid #dcfce7;
+      border-bottom: 1px solid #dcfce7;
+    }
+
+    /* Tables */
+    .table-responsive {
+      overflow-x: auto;
+      margin: 16px 0 20px 0;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+    }
+
+    table.tech-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: left;
+      background: #ffffff;
+    }
+
+    table.tech-table th {
+      background: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+      padding: 11px 14px;
+      border-bottom: 2px solid #cbd5e1;
+      text-transform: uppercase;
+      font-size: 0.76rem;
+      letter-spacing: 0.05em;
+    }
+
+    table.tech-table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid #e2e8f0;
+      color: #334155;
+      vertical-align: top;
+    }
+
+    table.tech-table tr:nth-child(even) td {
+      background-color: #f8fafc;
+    }
+
+    table.tech-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Step Lists & Checklists */
+    .step-list {
+      margin: 12px 0 16px 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .step-list-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-size: 0.93rem;
+      color: #334155;
+    }
+
+    .step-badge {
+      background: #e0f2fe;
+      color: #0369a1;
+      font-weight: 800;
+      font-size: 0.8rem;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+      border: 1px solid #bae6fd;
+    }
+
+    .step-text {
+      flex: 1;
+      line-height: 1.6;
+    }
+
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .check-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 14px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 0.88rem;
+    }
+
+    .check-card input[type="checkbox"] {
+      margin-top: 4px;
+      accent-color: #0284c7;
+      width: 16px;
+      height: 16px;
+    }
+
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin: 16px 0;
+    }
+
+    @media (max-width: 768px) {
+      .grid-2col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* SOP Card */
+    .sop-box {
+      border: 2px solid #0284c7;
+      border-radius: 12px;
+      padding: 22px;
+      background: #ffffff;
+      margin: 20px 0;
+    }
+
+    .sop-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+    }
+
+    .sop-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #0369a1;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .sop-badge {
+      background: #0284c7;
+      color: #ffffff;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .footer-signoff {
+      margin-top: 36px;
+      padding: 24px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+    }
+
+    .signoff-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-top: 24px;
+    }
+
+    .signoff-box {
+      border-top: 1px dashed #94a3b8;
+      padding-top: 8px;
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+
+<div class="master-wrapper">
+
+  <!-- ==================== COVER & DOKUMENTASI HEADER ==================== -->
+  <div class="doc-cover">
+    <div class="doc-cover-badge">Dokumen Resmi Instruksi Kerja &amp; Panduan Fabrikasi</div>
+    <h1>PANDUAN LENGKAP LANGKAH KERJA PERAKITAN &amp; KALIBRASI DIY DIGITAL ORBITAL SHAKER</h1>
+    <p class="doc-cover-desc">
+      Standard Operating Procedure (SOP) perakitan komprehensif dari tahap pengujian meja (bench-test), kalibrasi presisi daya 24V/12V, penyetelan arus driver TMC2209 StealthChop2, pengkabelan mikrokontroler, pembuatan poros eksentrik ganda &amp; counterweight, hingga komisioning beban nyata 1.5 kg.
+    </p>
+
+    <div class="doc-metadata-grid">
+      <div class="meta-item">
+        <strong>Dimensi Platform Meja</strong>
+        <span>25 &times; 30 cm (Akrilik / Dural)</span>
+      </div>
+      <div class="meta-item">
+        <strong>Kapasitas Beban Maks</strong>
+        <span>1.5 kg (Cairan Kultur / Lab)</span>
+      </div>
+      <div class="meta-item">
+        <strong>Radius / Stroke Orbit</strong>
+        <span>r = 10 mm (Diameter Orbit 20 mm)</span>
+      </div>
+      <div class="meta-item">
+        <strong>Rentang Kecepatan</strong>
+        <span>30 &ndash; 300 RPM (S-Curve Ramp)</span>
+      </div>
+      <div class="meta-item">
+        <strong>Motor &amp; Driver</strong>
+        <span>NEMA 17 (1.5A) + MKS TMC2209</span>
+      </div>
+      <div class="meta-item">
+        <strong>Pengontrol &amp; Fitur</strong>
+        <span>Arduino Uno R3 + Jam Digital RTC</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== DAFTAR ISI & ROADMAP PERAKITAN ==================== -->
+  <div class="toc-card avoid-break">
+    <div class="toc-title">📌 Roadmap &amp; Tahapan Pelaksanaan Perakitan</div>
+    <div class="toc-grid">
+      <a href="#modul-1" class="toc-link-item">
+        <div class="toc-num">1</div>
+        <div><strong>Modul 1: Keselamatan &amp; Kalibrasi Daya Presisi</strong><br><small>24V DC, LM2596 ke 12V, Vref TMC2209 ~0.92V, Common Ground</small></div>
+      </a>
+      <a href="#modul-2" class="toc-link-item">
+        <div class="toc-num">2</div>
+        <div><strong>Modul 2: Pengkabelan Kontrol &amp; Flash Firmware</strong><br><small>Pinout Arduino, LCD I2C, KY-040, Keypad, Dry-Run Smoke Test</small></div>
+      </a>
+      <a href="#modul-3" class="toc-link-item">
+        <div class="toc-num">3</div>
+        <div><strong>Modul 3: Fabrikasi Kinematika &amp; Perakitan Mekanik</strong><br><small>Base Plate, Pulley Belt GT2, Poros Eksentrik, Counterweight 500g, Satelit</small></div>
+      </a>
+      <a href="#modul-4" class="toc-link-item">
+        <div class="toc-num">4</div>
+        <div><strong>Modul 4: Integrasi Casing, Pendingin &amp; Komisioning</strong><br><small>Kipas 5010 12V, Uji Beban 1.5 kg, Troubleshooting &amp; SOP Lab</small></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ==================== CHECKLIST BILL OF MATERIALS (BOM) ==================== -->
+  <div class="section-card avoid-break">
+    <div class="section-header-box">
+      <div class="section-badge-num">📋</div>
+      <h2 class="section-title">Audit Kesiapan Bahan &amp; Perlengkapan (Checklist BOM)</h2>
+    </div>
+    <p>Pastikan seluruh komponen dan peralatan berikut telah tersedia di meja kerja sebelum memulai perakitan:</p>
+    
+    <div class="checklist-grid">
+      <div class="check-card">
+        <input type="checkbox" checked>
+        <div><strong>PSU Switching 24V 5A (120W)</strong><br><small>Adaptor 24V aktif + Kabel Steker AC 220V</small></div>
+      </div>
+      <div class="check-card">
+        <input type="checkbox" checked>
+        <div><strong>Motor Stepper NEMA 17 (17HS4401)</strong><br><small>Panjang bodi 40mm, arus 1.5A, holding torque 42 N·cm</small></div>
+      </div>
+      <div class="check-card">
+        <input type="checkbox" checked>
+        <div><strong>Driver MKS TMC2209 V2.0 / V1.3</strong><br><small>StealthChop2 silent + Heatsink aluminium biru</small></div>
+      </div>
+      <div class="check-card">
+        <input type="checkbox" checked>
+        <div><strong>Modul Step-Down LM2596 DC-DC</strong><br><small>Buck converter input 24V &rarr; output 12.0V DC</small></div>
+      </div>
+      <div class="check-card">
+        <input type="checkbox" checked>
+        <div><strong>Mikrokontroler Arduino Uno R3</strong><br><small>ATmega328P @ 16 MHz + Kabel USB tipe B</small></div>
+      </div>
+      <div class="check-card">
+        <input type="checkbox" checked>
+        <div><strong>CNC Shield V3 Board</strong><br><small>Slot stepper driver + kapasitor proteksi</small></div>
+      </div>
+      <div class="check-card">
+        <input type="checkbox" checked>
+        <div><strong>LCD 1602 + Modul I2C PCF8574</strong><br><small>Backpack 4-pin (VCC, GND, SDA, SCL)</small></div>
+      </div>
+      <div class="check-card">
+        <input type="checkbox" checked>
+        <div><strong>Rotary Encoder KY-040 Module</strong><br><small>Knob putar + tombol klik push switch</small></div>
+      </div>
+      <div class="check-card">
+        <input type="checkbox" checked>
+        <div><strong>Keypad Matriks 4&times;4 Tipis</strong><br><small>Input numerik cepat (16 tombol)</small></div>
+      </div>
+      <div class="check-card">
+        <input type="checkbox" checked>
+        <div><strong>Kipas Brushless DC 12V 5010</strong><br><small>Pendingin aktif heatsink TMC2209</small></div>
+      </div>
+      <div class="check-card">
+        <input type="checkbox" checked>
+        <div><strong>Transmisi Pulley &amp; Belt GT2</strong><br><small>Pulley 20T, Pulley 60T/20T, Timing belt tertutup 280T</small></div>
+      </div>
+      <div class="check-card">
+        <input type="checkbox" checked>
+        <div><strong>6&ndash;8x Ball Bearing 608ZZ (atau 625ZZ)</strong><br><small>Bantalan poros utama eksentrik dan satelit idler</small></div>
+      </div>
+      <div class="check-card">
+        <input type="checkbox" checked>
+        <div><strong>Counterweight Penyeimbang (~450&ndash;500g)</strong><br><small>Bandul plat baja/kuningan lawan arah 180&deg;</small></div>
+      </div>
+      <div class="check-card">
+        <input type="checkbox" checked>
+        <div><strong>Plat Meja Atas 25&times;30 cm &amp; Base Plate</strong><br><small>Akrilik 5 mm / Duralium + Matras silikon anti-slip</small></div>
+      </div>
+      <div class="check-card">
+        <input type="checkbox" checked>
+        <div><strong>4x Kaki Karet Peredam (*Rubber Feet*)</strong><br><small>Peredam getaran frekuensi rendah di dasar sasis</small></div>
+      </div>
+      <div class="check-card">
+        <input type="checkbox" checked>
+        <div><strong>Multimeter Digital &amp; Obeng Presisi</strong><br><small>Untuk kalibrasi tegangan 12.0V dan Vref 0.92V</small></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODUL 1 ==================== -->
+  <div id="modul-1" class="section-card page-break">
+    <div class="section-header-box">
+      <div class="section-badge-num">1</div>
+      <div>
+        <div class="doc-cover-badge">TAHAP 1 &bull; PRE-FLIGHT BENCH TEST</div>
+        <h2 class="section-title">Keselamatan Kerja, Distribusi Daya 24V &amp; Kalibrasi Elektronik Presisi</h2>
+      </div>
+    </div>
+
+    <p>
+      Kegagalan pada tahap distribusi daya tegangan tinggi (220V AC) atau kesalahan polaritas tegangan DC (24V/12V/5V) dapat berakibat fatal: sengatan listrik, kebakaran akibat <em>short-circuit</em>, atau kerusakan permanen pada IC mikrokontroler (Arduino ATmega328P) dan MOSFET driver motor (TMC2209). Lakukan audit keselamatan secara ketat sebelum mencolokkan steker ke sumber daya PLN.
+    </p>
+
+    <h3 class="sub-title">1.1 Keselamatan Penanganan Listrik AC 220V &amp; Proteksi Terminal</h3>
+    <div class="alert-box alert-danger">
+      <div>⚠️</div>
+      <div>
+        <strong>BAHAYA TEGANGAN TINGGI (220V AC LETHAL VOLTAGE):</strong> Terminal input AC pada PSU jaring dalam kondisi terbuka. Jangan pernah menyentuh terminal kabel atau bodi logam saat kabel steker terhubung ke stopkontak PLN!
+      </div>
+    </div>
+
+    <ul class="step-list">
+      <li class="step-list-item">
+        <div class="step-badge">&bull;</div>
+        <div class="step-text"><strong>Terminal L (Line / Phase):</strong> Hubungkan ke kabel fasa AC bertegangan (warna Cokelat/Hitam). Pasang saklar rocker dan sekering kaca <em>2A Slow-Blow</em> pada jalur ini.</div>
+      </li>
+      <li class="step-list-item">
+        <div class="step-badge">&bull;</div>
+        <div class="step-text"><strong>Terminal N (Neutral):</strong> Hubungkan ke kabel netral AC (warna Biru).</div>
+      </li>
+      <li class="step-list-item">
+        <div class="step-badge">&bull;</div>
+        <div class="step-text"><strong>Terminal FG / ⏚ (Frame Ground / Earth):</strong> Wajib dihubungkan ke kabel arde instalasi rumah (Hijau-Kuning) untuk membuang kebocoran arus induksi pada sasis logam PSU.</div>
+      </li>
+      <li class="step-list-item">
+        <div class="step-badge">&bull;</div>
+        <div class="step-text"><strong>Terminal Output DC:</strong> <code class="inline-code">-V / COM</code> adalah Ground 24V DC, dan <code class="inline-code">+V</code> adalah Positif 24V DC. Gunakan kabel AWG 20&ndash;22 dengan skun terminal U berisolasi.</div>
+      </li>
+    </ul>
+
+    <h3 class="sub-title">1.2 Prosedur Kalibrasi Modul Step-Down LM2596 (Wajib 12.00V DC)</h3>
+    <p>
+      Modul LM2596 bertugas menurunkan tegangan bus <strong>24V DC</strong> dari PSU menjadi <strong>12.00V DC</strong> yang stabil untuk mencatu <strong>Kipas Pendingin DC 12V 5010</strong> dan <strong>Pin VIN Arduino Uno</strong>.
+    </p>
+
+    <div class="alert-box alert-danger">
+      <div>🚫</div>
+      <div>
+        <strong>PERINGATAN KRITIKAL:</strong> Banyak modul LM2596 baru dari pabrik memiliki setelan trimpot pada batas atas (~23.5V). <strong>JANGAN PERNAH</strong> menghubungkan output LM2596 ke pin VIN Arduino atau Kipas 12V sebelum tegangan diukur dan dikunci tepat pada 12.00V! Tegangan 24V akan menghancurkan regulator Arduino dan membakar lilitan kipas seketika.
+      </div>
+    </div>
+
+    <div class="ascii-block">
+======================== SKEMA BENCH TEST KALIBRASI LM2596 ========================
+
+  [PSU JARING 24V]                       [MODUL LM2596 BUCK]                      [MULTIMETER DIGITAL]
+ +----------------+                    +--------------------+                    +--------------------+
+ | +V  (24V DC)  |-----(Kabel Merah)-->| IN+            OUT+ |---[Probe Merah]-->| [VΩmA]             |
+ |                |                    |    [TRIMPOT 3296W] |                    |                    |
+ | -V  (GND 24V) |-----(Kabel Hitam)-->| IN-            OUT- |---[Probe Hitam]-->| [COM]   [ 12.00V ] |
+ +----------------+                    +--------------------+                    +--------------------+
+                                                |
+                                      Putar berlawanan jarum jam
+                                      (CCW ~5-15 putaran) hingga
+                                      tegangan drop ke 12.00V
+    </div>
+
+    <ol class="step-list">
+      <li class="step-list-item">
+        <div class="step-badge">1</div>
+        <div class="step-text"><strong>Isolasi Beban Output:</strong> Biarkan terminal <code class="inline-code">OUT+</code> dan <code class="inline-code">OUT-</code> LM2596 dalam kondisi terbuka tanpa beban kabel.</div>
+      </li>
+      <li class="step-list-item">
+        <div class="step-badge">2</div>
+        <div class="step-text"><strong>Sambungkan Input:</strong> Hubungkan <code class="inline-code">+V</code> PSU ke <code class="inline-code">IN+</code> dan <code class="inline-code">-V</code> PSU ke <code class="inline-code">IN-</code> LM2596.</div>
+      </li>
+      <li class="step-list-item">
+        <div class="step-badge">3</div>
+        <div class="step-text"><strong>Setting Multimeter:</strong> Atur Multimeter Digital ke mode <strong>DC Voltage (⎓ V) 20V</strong>. Tempelkan probe merah di <code class="inline-code">OUT+</code> dan probe hitam di <code class="inline-code">OUT-</code>.</div>
+      </li>
+      <li class="step-list-item">
+        <div class="step-badge">4</div>
+        <div class="step-text"><strong>Penyetelan Trimpot:</strong> Nyalakan PSU. Putar baut trimpot kuningan (3296W) berlawanan arah jarum jam (CCW) sebanyak 5&ndash;15 putaran hingga angka tegangan drop dan terkunci di <strong>TEPAT 12.00V DC</strong> (&plusmn;0.05V). Matikan PSU.</div>
+      </li>
+    </ol>
+
+    <h3 class="sub-title">1.3 Kalibrasi Vref Driver MKS TMC2209 V2.0 (Silent Stepper)</h3>
+    <p>
+      TMC2209 menggunakan modulasi <em>StealthChop2</em> untuk pergerakan motor yang senyap tanpa desis frekuensi audio. Modul MKS TMC2209 V2.0 menggunakan <em>Current Sense Resistors</em> <code class="inline-code">Rsense = 0.11 Ω</code> (kode chip SMD: 'R110').
+    </p>
+
+    <div class="formula-card">
+      Rumus Arus RMS &amp; Penentuan Tegangan Vref:<br>
+      $I_{\text{RMS}} = \frac{V_{\text{ref}}}{\sqrt{2} \times 8 \times R_{\text{sense}}} = \frac{V_{\text{ref}}}{1.414 \times 8 \times 0.11} \approx 0.8037 \times V_{\text{ref}}$<br>
+      Target Arus Motor 17HS4401 (1.5A Rated): $I_{\text{RMS}} = 0.74\text{A} \implies \mathbf{V_{\text{ref}} = 0.90\text{V} - 0.95\text{V DC}}$
+    </div>
+
+    <div class="table-responsive">
+      <table class="tech-table">
+        <thead>
+          <tr>
+            <th>Setting Vref</th>
+            <th>Arus RMS</th>
+            <th>Arus Peak</th>
+            <th>Perilaku Motor &amp; Suhu Operasi</th>
+            <th>Status Rekomendasi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>0.70 V</code></td>
+            <td>0.56 A</td>
+            <td>0.80 A</td>
+            <td>Torsi kurang kuat, berisiko <em>step-loss</em> saat beban 1.5 kg akselerasi ke 300 RPM.</td>
+            <td>Underpowered</td>
+          </tr>
+          <tr style="background: #f0f9ff;">
+            <td><strong>0.90 V &ndash; 0.95 V</strong></td>
+            <td><strong>0.72 A &ndash; 0.76 A</strong></td>
+            <td><strong>1.02 A &ndash; 1.08 A</strong></td>
+            <td><strong>GOLDEN SPOT:</strong> Torsi mantap, akselerasi mulus tanpa getaran, motor hangat normal (45&deg;C&ndash;50&deg;C).</td>
+            <td><strong style="color: #0284c7;">DIREKOMENDASIKAN</strong></td>
+          </tr>
+          <tr>
+            <td><code>1.10 V</code></td>
+            <td>0.88 A</td>
+            <td>1.25 A</td>
+            <td>Torsi sangat tinggi, motor panas (65&deg;C&ndash;70&deg;C). Wajib hembusan kipas kuat.</td>
+            <td>Batas Maksimal Aman</td>
+          </tr>
+          <tr>
+            <td><code>&gt; 1.30 V</code></td>
+            <td>&gt; 1.04 A</td>
+            <td>&gt; 1.48 A</td>
+            <td>Driver TMC2209 masuk proteksi <em>Thermal Shutdown</em>. Motor mendidih.</td>
+            <td><strong style="color: #ef4444;">BAHAYA (DILARANG)</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="ascii-block">
+======================== CARA MENGUKUR VREF TMC2209 ========================
+
+       [MULTIMETER DIGITAL (Mode DC 2V)]
+           +-----------------------+
+           |     [ 0.925 V ]       |
+           +-----------------------+
+              | COM          VΩmA |
+              |                |
+    (Probe Hitam ke GND)   (Probe Merah ke Kepala Baut Trimpot)
+              |                |
+              v                v
+      [CASING USB / GND]   [TRIMPOT DRIVER]
+              |                |
+    +-------------------------------------+
+    | [EN] [DIR] [STEP]              [VM] |  <-- MKS TMC2209 V2.0
+    |                                [GM] |
+    |      +-----+     [+] TRIMPOT   [B2] |
+    |      | IC  |      ^            [B1] |
+    |      | TMC |      | (Ukur di   [A1] |
+    |      |2209 |      |  kepala    [A2] |
+    |      +-----+      |  baut ini) [GD] |
+    |                                [VD] |
+    +-------------------------------------+
+    </div>
+
+    <h3 class="sub-title">1.4 Konfigurasi Jumper &amp; Orientasi Pasang TMC2209 pada CNC Shield V3</h3>
+    <div class="alert-box alert-danger">
+      <div>🚫</div>
+      <div>
+        <strong>FATAL ERROR WARNING (JANGAN SAMPAI TERBALIK):</strong> Memasang driver TMC2209 terbalik 180&deg; akan langsung mengalirkan tegangan 24V (VMOT) ke pin mikrokontroler 5V (DIR/STEP). Hal ini akan menghancurkan driver dan Arduino Uno dalam hitungan milidetik!
+      </div>
+    </div>
+
+    <ul class="step-list">
+      <li class="step-list-item">
+        <div class="step-badge">1</div>
+        <div class="step-text"><strong>Setting Jumper Microstepping:</strong> Tancapkan <strong>1 buah jumper cap</strong> hanya pada baris pin <strong>M0 (MS1)</strong> di bawah soket sumbu X (X-Axis). Biarkan baris pin M1 dan M2 kosong. Ini mengaktifkan mode <strong>1/16 Microstepping</strong> dengan interpolasi 1/256 StealthChop2.</div>
+      </li>
+      <li class="step-list-item">
+        <div class="step-badge">2</div>
+        <div class="step-text"><strong>Verifikasi Pinout Driver:</strong> Pastikan pin bertuliskan <code class="inline-code">EN</code> pada driver menancap ke lubang <code class="inline-code">EN</code> CNC Shield, dan pin <code class="inline-code">DIR</code> ke lubang <code class="inline-code">DIR</code>. Trimpot baut potensiometer pada MKS TMC2209 V2.0 menghadap ke arah bawah (menjauhi kapasitor biru besar CNC Shield).</div>
+      </li>
+      <li class="step-list-item">
+        <div class="step-badge">3</div>
+        <div class="step-text"><strong>Pemasangan Heatsink:</strong> Bersihkan chip TMC2209, rekatkan heatsink aluminium biru tepat di tengah. Pastikan sirip heatsink tidak menyentuh pin header logam di sekelilingnya.</div>
+      </li>
+    </ul>
+
+    <h3 class="sub-title">1.5 Arsitektur Titik Referensi Bersama (Star Common Ground)</h3>
+    <p>
+      Sistem beroperasi dengan 3 domain tegangan: 24V (Motor), 12V (Kipas/VIN), dan 5V (Logika MCU). Seluruh kutub negatif (GND) <strong>WAJIB dihubungkan bersama ke satu titik referensi (Common Ground)</strong> untuk mencegah floating voltage yang menyebabkan sinyal clock terganggu.
+    </p>
+
+    <div class="ascii-block">
+======================== TOPOLOGI STAR COMMON GROUND ========================
+
+ [PSU JARING 24V] 
+   Terminal [-V] (GND 24V)
+         │
+         ├───(Kabel AWG 20)───► [LM2596 BUCK CONVERTER]
+         │                        Terminal [IN-] & [OUT-] (Internal Common GND)
+         │                               │
+         │                               ├───(AWG 22)───► [KIPAS 12V (Kabel Hitam -)]
+         │                               │
+         │                               └───(AWG 22)───► [ARDUINO UNO (Pin GND)]
+         │                                                       │
+         └───(Kabel AWG 20)───► [CNC SHIELD V3]                  ├──► [LCD 1602 GND]
+                                  Terminal Power GND ◄───────────┼──► [ROTARY ENCODER GND]
+                                  & Soket TMC2209 GND            └──► [KEYPAD GROUND (Internal)]
+    </div>
+  </div>
+
+  <!-- ==================== MODUL 2 ==================== -->
+  <div id="modul-2" class="section-card page-break">
+    <div class="section-header-box">
+      <div class="section-badge-num">2</div>
+      <div>
+        <div class="doc-cover-badge">TAHAP 2 &bull; INTEGRASI ELEKTRONIK &amp; FIRMWARE</div>
+        <h2 class="section-title">Pengkabelan Sistem Kontrol, Flash Firmware &amp; Dry-Run Bench Test</h2>
+      </div>
+    </div>
+
+    <p>
+      Sistem kendali orbital shaker menggunakan arsitektur interupsi perangkat keras <strong>Timer1 16-bit</strong> pada Arduino Uno untuk membangkitkan pulsa step motor dengan kepresisian mikrodetik tanpa terdistorsi oleh rendering layar LCD atau pembacaan tombol.
+    </p>
+
+    <h3 class="sub-title">2.1 Diagram Skema Interkoneksi Fisik (SVG Vector Blueprint)</h3>
+    <div style="margin: 18px 0; text-align: center;">
+      <img src="wiring_diagram.svg" alt="Skema Wiring Lengkap Orbital Shaker" style="width: 100%; max-width: 900px; border-radius: 12px; border: 1px solid #1e293b; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+    </div>
+
+    <h3 class="sub-title">2.2 Tabel Pinout Lengkap Arduino Uno R3</h3>
+    <div class="table-responsive">
+      <table class="tech-table">
+        <thead>
+          <tr>
+            <th>Pin Arduino</th>
+            <th>Arah I/O</th>
+            <th>Target Periferal</th>
+            <th>Spesifikasi &amp; Fungsi Sistem</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code class="inline-code">D0 (RX)</code></td>
+            <td>Input</td>
+            <td>USB UART Serial</td>
+            <td>Upload firmware &amp; sinkronisasi waktu PC (115200 bps).</td>
+          </tr>
+          <tr>
+            <td><code class="inline-code">D1 (TX)</code></td>
+            <td>Output</td>
+            <td>USB UART Serial</td>
+            <td>Telemetri log status RPM dan waktu operasi.</td>
+          </tr>
+          <tr>
+            <td><code class="inline-code">D2</code></td>
+            <td>Output</td>
+            <td>TMC2209 STEP (X.STEP)</td>
+            <td>Pulsa frekuensi tinggi Timer1 ISR (PORTD bit 2).</td>
+          </tr>
+          <tr>
+            <td><code class="inline-code">D3</code></td>
+            <td>Input</td>
+            <td>KY-040 CLK (A)</td>
+            <td>Hardware External Interrupt (INT1) deteksi rotasi anti-skip.</td>
+          </tr>
+          <tr>
+            <td><code class="inline-code">D4</code></td>
+            <td>Input</td>
+            <td>KY-040 DT (B)</td>
+            <td>Sinyal penentu arah putaran knob (CW / CCW).</td>
+          </tr>
+          <tr>
+            <td><code class="inline-code">D5</code></td>
+            <td>Output</td>
+            <td>TMC2209 DIR (X.DIR)</td>
+            <td>Arah putar motor stepper (HIGH = Clockwise).</td>
+          </tr>
+          <tr>
+            <td><code class="inline-code">D6</code></td>
+            <td>Input</td>
+            <td>KY-040 SW</td>
+            <td>Tombol klik switch encoder (Toggle START / STOP).</td>
+          </tr>
+          <tr>
+            <td><code class="inline-code">D7</code></td>
+            <td>Output</td>
+            <td>Keypad Matriks R1</td>
+            <td>Baris 1 Keypad 4&times;4 (Tombol 1, 2, 3, A).</td>
+          </tr>
+          <tr>
+            <td><code class="inline-code">D8</code></td>
+            <td>Output</td>
+            <td>TMC2209 ENABLE (EN)</td>
+            <td>Active LOW (LOW = Motor On bertenaga, HIGH = Motor Bebas).</td>
+          </tr>
+          <tr>
+            <td><code class="inline-code">D9</code></td>
+            <td>Output</td>
+            <td>Keypad Matriks R2</td>
+            <td>Baris 2 Keypad 4&times;4 (Tombol 4, 5, 6, B).</td>
+          </tr>
+          <tr>
+            <td><code class="inline-code">D10</code></td>
+            <td>Output</td>
+            <td>Keypad Matriks R3</td>
+            <td>Baris 3 Keypad 4&times;4 (Tombol 7, 8, 9, C).</td>
+          </tr>
+          <tr>
+            <td><code class="inline-code">D11</code></td>
+            <td>Output</td>
+            <td>Keypad Matriks R4</td>
+            <td>Baris 4 Keypad 4&times;4 (Tombol *, 0, #, D).</td>
+          </tr>
+          <tr>
+            <td><code class="inline-code">D12</code></td>
+            <td>Input Pullup</td>
+            <td>Keypad Matriks C1</td>
+            <td>Kolom 1 Keypad 4&times;4 (Tombol 1, 4, 7, *).</td>
+          </tr>
+          <tr>
+            <td><code class="inline-code">D13</code></td>
+            <td>Input Pullup</td>
+            <td>Keypad Matriks C2</td>
+            <td>Kolom 2 Keypad 4&times;4 (Tombol 2, 5, 8, 0).</td>
+          </tr>
+          <tr>
+            <td><code class="inline-code">A0 (D14)</code></td>
+            <td>Input Pullup</td>
+            <td>Keypad Matriks C3</td>
+            <td>Kolom 3 Keypad 4&times;4 (Tombol 3, 6, 9, #).</td>
+          </tr>
+          <tr>
+            <td><code class="inline-code">A1 (D15)</code></td>
+            <td>Input Pullup</td>
+            <td>Keypad Matriks C4</td>
+            <td>Kolom 4 Keypad 4&times;4 (Tombol A, B, C, D).</td>
+          </tr>
+          <tr>
+            <td><code class="inline-code">A2 (D16)</code></td>
+            <td>Output</td>
+            <td>Buzzer Aktif 5V (+)</td>
+            <td>Audio feedback saat tombol ditekan &amp; alarm timer selesai.</td>
+          </tr>
+          <tr>
+            <td><code class="inline-code">A4 (D18)</code></td>
+            <td>I2C Data</td>
+            <td>LCD 1602 SDA</td>
+            <td>Jalur data I2C PCF8574.</td>
+          </tr>
+          <tr>
+            <td><code class="inline-code">A5 (D19)</code></td>
+            <td>I2C Clock</td>
+            <td>LCD 1602 SCL</td>
+            <td>Jalur clock sinkronisasi I2C.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-title">2.2 Pengkabelan Motor Stepper NEMA 17 (17HS4401)</h3>
+    <div class="grid-2col">
+      <div>
+        <table class="tech-table">
+          <thead>
+            <tr>
+              <th>Warna Kabel</th>
+              <th>Fasa Motor</th>
+              <th>Header CNC Shield X</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Hitam (Black)</strong></td>
+              <td>Phase A+ (A1)</td>
+              <td>Pin 1 (2B)</td>
+            </tr>
+            <tr>
+              <td><strong style="color: #10b981;">Hijau (Green)</strong></td>
+              <td>Phase A- (A2)</td>
+              <td>Pin 2 (2A)</td>
+            </tr>
+            <tr>
+              <td><strong style="color: #ef4444;">Merah (Red)</strong></td>
+              <td>Phase B+ (B1)</td>
+              <td>Pin 3 (1A)</td>
+            </tr>
+            <tr>
+              <td><strong style="color: #0284c7;">Biru (Blue)</strong></td>
+              <td>Phase B- (B2)</td>
+              <td>Pin 4 (1B)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="alert-box alert-info">
+          <div>💡</div>
+          <div>
+            <strong>Uji Pasangan Fasa (Coil Short Test):</strong> Satukan ujung kabel Hitam dan Hijau dengan jari, lalu putar poros motor dengan tangan. Poros akan terasa berat/tertahan. Jika dilepas, poros berputar ringan. Hal ini membuktikan Hitam-Hijau adalah satu pasangan fasa A. Lakukan hal yang sama untuk Merah-Biru (Fasa B).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub-title">2.3 Prosedur Flash Firmware Arduino</h3>
+    <ul class="step-list">
+      <li class="step-list-item">
+        <div class="step-badge">1</div>
+        <div class="step-text">Buka folder sketch <code class="inline-code">Arduino code/orbital_shaker/orbital_shaker.ino</code> pada Arduino IDE.</div>
+      </li>
+      <li class="step-list-item">
+        <div class="step-badge">2</div>
+        <div class="step-text">Buka tab <code class="inline-code">config.h</code>, pastikan <code class="inline-code">#define USE_LCD_KEYPAD_SHIELD false</code> (jika menggunakan LCD I2C + CNC Shield) dan periksa alamat <code class="inline-code">LCD_I2C_ADDR 0x27</code>.</div>
+      </li>
+      <li class="step-list-item">
+        <div class="step-badge">3</div>
+        <div class="step-text">Pilih board <strong>Arduino Uno</strong> dan Port COM yang sesuai, lalu tekan tombol <strong>Upload (Ctrl + U)</strong>. Jam digital internal otomatis disinkronisasi dari waktu kompilasi komputer (<code class="inline-code">__TIME__</code>).</div>
+      </li>
+      <li class="step-list-item">
+        <div class="step-badge">4</div>
+        <div class="step-text">Buka Serial Monitor (115200 baud). Pastikan muncul pesan inisialisasi: <code class="inline-code">[System Ready.]</code>.</div>
+      </li>
+    </ul>
+
+    <h3 class="sub-title">2.4 Prosedur Dry-Run Smoke Test (Tanpa Beban Mekanik)</h3>
+    <ol class="step-list">
+      <li class="step-list-item">
+        <div class="step-badge">1</div>
+        <div class="step-text"><strong>Tes Display LCD:</strong> Colokkan USB Arduino. Putar trimpot kontras biru di belakang LCD I2C hingga teks terbaca tajam: Baris 1: <code class="inline-code">RPM:120  STANDBY</code>, Baris 2: <code class="inline-code">JAM  06:50:00 WIB</code> (detik berdetik lancar).</div>
+      </li>
+      <li class="step-list-item">
+        <div class="step-badge">2</div>
+        <div class="step-text"><strong>Tes Rotary Encoder:</strong> Putar knob searah jarum jam (RPM bertambah +5 RPM per klik) dan berlawanan arah jarum jam (RPM berkurang). Tekan tombol knob encoder untuk memulai putaran motor.</div>
+      </li>
+      <li class="step-list-item">
+        <div class="step-badge">3</div>
+        <div class="step-text"><strong>Tes Respon Motor Stepper:</strong> Nyalakan PSU 24V. Saat start ditekan, motor berakselerasi lembut selama 2 detik (Ramp-Up S-Curve) hingga mencapai 120 RPM. Suara motor harus sangat senyap (StealthChop2) tanpa getaran sentak. Tekan stop, motor melambat lembut selama 1.5 detik hingga berhenti penuh.</div>
+      </li>
+    </ol>
+  </div>
+
+  <!-- ==================== MODUL 3 ==================== -->
+  <div id="modul-3" class="section-card page-break">
+    <div class="section-header-box">
+      <div class="section-badge-num">3</div>
+      <div>
+        <div class="doc-cover-badge">TAHAP 3 &bull; FABRIKASI &amp; PERAKITAN MEKANIKAL</div>
+        <h2 class="section-title">Fabrikasi Kinematika, Desain Eksentrik &amp; Perakitan Mekanikal Total</h2>
+      </div>
+    </div>
+
+    <p>
+      Gerakan pada <em>Orbital Shaker</em> secara fisis adalah <strong>Pure Circular Translation (Translasi Melingkar Murni)</strong>, bukan rotasi/putaran poros (*spin*). Setiap titik di permukaan meja membentuk lingkaran berdiameter $20\text{ mm}$ ($r = 10\text{ mm}$) dengan orientasi arah meja selalu konstan terhadap kerangka laboratorium ($\omega_{\text{self-rotation}} = 0$).
+    </p>
+
+    <div class="ascii-block">
+KINEMATIKA PERGERAKAN MEJA (PURE TRANSLATION vs ROTASI POROS):
+
+    [Gerakan Orbital Shaker: TRANSLASI]          [Gerakan Meja Putar: ROTASI SPINNIG]
+         A1 ---------> A2 (t = T/4)                        A1 --------- B1
+         |             |                                   |     ^     |
+         |   [MEJA]    |   (Orientasi Utuh,                |     |     |   (Meja memuntir,
+         |             |    tidak berputar)                |  (+Poros) |    orientasi sumbu
+         v             v                                   v           v    berubah liar)
+         A4 <--------- A3 (t = T/2)                        A2 --------- B2
+
+   Lintasan Titik A: Lingkaran Planar (r=10mm)      Lintasan Titik A: Berputar terhadap titik tengah
+    Orientasi Sumbu: Tetap Sejajar Lab Frame         Orientasi Sumbu: Berotasi 360 Derajat
+    </div>
+
+    <h3 class="sub-title">3.1 Persiapan Rangka Dasar (Base Plate) &amp; Kaki Karet Peredam</h3>
+    <ul class="step-list">
+      <li class="step-list-item">
+        <div class="step-badge">&bull;</div>
+        <div class="step-text">Pasang <strong>4x Kaki Karet Peredam Getaran (*Rubber Feet*)</strong> di 4 sudut terluar Base Plate menggunakan baut countersunk M4 &times; 16 mm dan mur Nyloc M4. Kaki karet menyerap gelombang mekanik 0.5&ndash;5 Hz dan mencegah alat bergeser di atas meja (*anti-walking*).</div>
+      </li>
+      <li class="step-list-item">
+        <div class="step-badge">&bull;</div>
+        <div class="step-text">Buat lubang slot geser memanjang ($4.2 \times 12\text{ mm}$) untuk dudukan baut NEMA 17 agar jarak sumbu belt dapat disetel &plusmn;6 mm.</div>
+      </li>
+    </ul>
+
+    <h3 class="sub-title">3.2 Perakitan Transmisi Pulley &amp; Timing Belt GT2</h3>
+    <ul class="step-list">
+      <li class="step-list-item">
+        <div class="step-badge">1</div>
+        <div class="step-text">Pasang <strong>Pulley GT2 20T Bore 5mm</strong> pada poros D-shaft motor NEMA 17. Kencangkan 2x grub screw M3 tepat pada bidang rata D-shaft dengan Loctite 242 (Blue Threadlocker).</div>
+      </li>
+      <li class="step-list-item">
+        <div class="step-badge">2</div>
+        <div class="step-text">Pasang <strong>Pulley GT2 60T (atau 20T rasio 1:1) Bore 8mm</strong> pada poros penggerak utama.</div>
+      </li>
+      <li class="step-list-item">
+        <div class="step-badge">3</div>
+        <div class="step-text">Pasang <strong>Timing Belt GT2 Loop Tertutup 280 mm</strong> melingkar pada kedua pulley. Tarik motor menjauhi poros pusat dengan gaya regang sedang (~15&ndash;20 N). Defleksi sabuk yang ideal adalah <strong>1.5 &ndash; 2.5 mm</strong> saat ditekan dengan jari tengah. Kencangkan 4 baut M3 motor secara menyilang.</div>
+      </li>
+    </ul>
+
+    <h3 class="sub-title">3.3 Desain Central Drive Hub &amp; Counterweight Balancing (~500 Gram)</h3>
+    <p>
+      Ketika meja atas memikul sampel cairan ($1.5\text{ kg}$), total massa yang berorbit adalah $\approx 2.0\text{ kg}$. Pada 300 RPM ($\omega = 31.4\text{ rad/s}$), gaya sentrifugal yang timbul mencapai $F_{\text{cf}} = m \cdot \omega^2 \cdot r \approx 20\text{ Newton} \approx 2\text{ kg-force}$ yang berputar 5 kali per detik.
+    </p>
+
+    <div class="alert-box alert-danger">
+      <div>⚠️</div>
+      <div>
+        <strong>MUTLAK WAJIB MEMASANG COUNTERWEIGHT:</strong> Tanpa counterweight penyeimbang, gaya dinamis 20 N akan menggetarkan meja secara destruktif dan membanting sasis. Counterweight <strong>~450 &ndash; 500 gram</strong> wajib dipasang pada poros utama tepat berlawanan arah <strong>180&deg;</strong> dari pin eksentrik platform!
+      </div>
+    </div>
+
+    <div class="ascii-block">
+DIAGRAM POTONGAN SENTRAL DRIVE HUB & COUNTERWEIGHT:
+
+                  [TOP PLATE / MEJA ATAS 25x30 cm]
+                               ||
+                   +-----------||-----------+
+                   |  Ball Bearing 608ZZ    |  <-- Pin Eksentrik (Offset r = 10 mm)
+                   +-----------||-----------+
+                               || (Pin r=10mm)
+        +----------------------++-------------------------------+
+        |                                                       |
+        |   POROS UTAMA (Sumbu Putar 0)                         |   === COUNTERWEIGHT ===
+        |             | |                                       |   (Massa: ~450-500 gram,
+        |             | |                                       |    Arah: Tepat 180 DEG)
+        +-------------|-|---------------------------------------+
+                      | |
+             +--------|-|--------+
+             | Bearing Base Plate|
+             +-------------------+
+                      | | (Poros Bawah Dia 8mm)
+               [ Pulley GT2 60T ]
+    </div>
+
+    <h3 class="sub-title">3.4 Perakitan Satellite Idlers (Penjaga Orientasi Meja)</h3>
+    <p>
+      Untuk mencegah meja memuntir (*anti-rotation*) dan menjamin translasi paralel murni, pasang 4 unit <strong>Satellite Idler Bearings (608ZZ)</strong> di 4 sudut Base Plate dengan offset eksentrik identik $r = 10.0\text{ mm}$.
+    </p>
+
+    <div class="alert-box alert-warning">
+      <div>⚡</div>
+      <div>
+        <strong>ATURAN SINKRONISASI SUDUT FASE:</strong> Saat memasang Top Plate pertama kali, pastikan seluruh pin eksentrik satelit idler dan poros pusat menghadap ke arah sudut fase yang <strong>SAMA PERSIS (0&deg;, menunjuk ke arah jam 3)</strong>. Deviasi sudut akan mengunci meja (*mechanical binding*).
+      </div>
+    </div>
+
+    <h3 class="sub-title">3.5 Pemasangan Top Plate (25 &times; 30 cm) &amp; Uji Manual Zero-Binding</h3>
+    <ol class="step-list">
+      <li class="step-list-item">
+        <div class="step-badge">1</div>
+        <div class="step-text">Pasang Top Plate akrilik/aluminium $250 \times 300\text{ mm}$ ke bagian atas bearing eksentrik menggunakan baut <strong>M4 / M5 Stainless Steel</strong> dan <strong>Mur Pengunci Nyloc</strong>. (Jangan pernah gunakan mur standar tanpa pengunci karena akan kendur akibat getaran 5 Hz).</div>
+      </li>
+      <li class="step-list-item">
+        <div class="step-badge">2</div>
+        <div class="step-text">Rekatkan <strong>Silicone Mat Anti-Slip ($240 \times 290\text{ mm}$)</strong> pada permukaan atas Top Plate menggunakan perekat 3M.</div>
+      </li>
+      <li class="step-list-item">
+        <div class="step-badge">3</div>
+        <div class="step-text"><strong>Uji Manual Putaran Jari (*Zero-Binding Test*):</strong> Putar pulley utama dengan jari tangan sebanyak 5&ndash;10 putaran sebelum menyalakan motor. Putaran harus terasa sangat licin (*butter-smooth*), tanpa hentakan atau titik sempit (*tight spots*). Jika terasa berat, kendurkan sedikit baut satelit, putar meja agar menemukan <em>self-alignment</em>, lalu kencangkan kembali.</div>
+      </li>
+    </ol>
+  </div>
+
+  <!-- ==================== MODUL 4 ==================== -->
+  <div id="modul-4" class="section-card page-break">
+    <div class="section-header-box">
+      <div class="section-badge-num">4</div>
+      <div>
+        <div class="doc-cover-badge">TAHAP 4 &bull; INTEGRASI, PENDINGINAN &amp; KOMISIONING</div>
+        <h2 class="section-title">Integrasi Casing, Sistem Pendingin Aktif, Kalibrasi Beban Nyata &amp; SOP</h2>
+      </div>
+    </div>
+
+    <h3 class="sub-title">4.1 Penataan Kompartemen &amp; Manajemen Kabel</h3>
+    <ul class="step-list">
+      <li class="step-list-item">
+        <div class="step-badge">&bull;</div>
+        <div class="step-text">Pasang PSU 24V, Step-Down LM2596, dan Arduino + CNC Shield pada kompartemen bawah menggunakan <strong>Standoff Isolator Nylon M3 &times; 10 mm</strong>.</div>
+      </li>
+      <li class="step-list-item">
+        <div class="step-badge">&bull;</div>
+        <div class="step-text"><strong>Pemisahan Jalur Kabel (EMI Isolation):</strong> Jalur daya AC 220V dan DC 24V dirutekan di kompartemen kiri (kabel fasa motor dipilin/twisted pair). Jalur sinyal data mikro (LCD I2C SDA/SCL, Encoder, Keypad) dirutekan di kompartemen kanan untuk mencegah induksi derau.</div>
+      </li>
+    </ul>
+
+    <h3 class="sub-title">4.2 Sistem Pendingin Aktif Driver TMC2209 (Kipas DC 12V 5010)</h3>
+    <p>
+      Pada kecepatan 300 RPM dengan beban 1.5 kg, MOSFET internal TMC2209 mendisipasikan panas secara kontinu. Tanpa hembusan udara aktif, suhu IC dapat melebihi $120^\circ\text{C}$ dan memicu <em>Over-Temperature Shutdown (OTSD)</em> pada $150^\circ\text{C}$ yang mematikan motor mendadak.
+    </p>
+
+    <div class="alert-box alert-info">
+      <div>❄️</div>
+      <div>
+        <strong>Pemasangan Kipas 12V 5010:</strong> Pasang Kipas 5010 (diberi tegangan 12.0V dari LM2596) pada bracket miring 45&deg; berjarak 15 mm mengarah langsung meniup heatsink aluminium TMC2209. Buat kisi intake di dinding bawah dan kisi exhaust di dinding atas casing. Pendinginan aktif ini menjaga suhu heatsink stabil di <strong>$44^\circ\text{C} - 52^\circ\text{C}$</strong> (sangat aman).
+      </div>
+    </div>
+
+    <h3 class="sub-title">4.3 Prosedur Commissioning &amp; Uji Beban Nyata (Real-Load Stress Test)</h3>
+    <div class="table-responsive">
+      <table class="tech-table">
+        <thead>
+          <tr>
+            <th>Tahap Pengujian</th>
+            <th>Beban Sampel</th>
+            <th>Rentang RPM &amp; Durasi</th>
+            <th>Kriteria Kelulusan (Pass Criteria)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1. Ramp Test Kosong</strong></td>
+            <td>Tanpa beban (0 kg)</td>
+            <td>0 &rarr; 50 &rarr; 100 &rarr; 200 &rarr; 300 RPM (5 menit)</td>
+            <td>Akselerasi mulus 2 detik, tidak ada lonjakan getaran kasar atau resonansi.</td>
+          </tr>
+          <tr>
+            <td><strong>2. Uji Beban Bertahap</strong></td>
+            <td>500 mL &rarr; 1000 mL &rarr; 1500 mL Air</td>
+            <td>150, 200, dan 300 RPM (masing-masing 3 menit)</td>
+            <td>Vorteks cairan terbentuk laminer sempurna, shaker tidak bergeser di meja (*zero walking*).</td>
+          </tr>
+          <tr>
+            <td><strong>3. Uji Ketahanan 60 Menit</strong></td>
+            <td>1.5 kg (Beban Penuh)</td>
+            <td>200 RPM kontinu selama 60 menit</td>
+            <td>Suhu driver TMC2209 &le; 55&deg;C, suhu motor NEMA 17 &le; 50&deg;C, deviasi RPM 0.0%.</td>
+          </tr>
+          <tr>
+            <td><strong>4. Uji Timer Countdown</strong></td>
+            <td>1.5 kg</td>
+            <td>Timer Mode: 15 menit</td>
+            <td>Waktu berkurang presisi, motor auto-stop lembut saat 00:00, buzzer alarm berbunyi 4x.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-title">4.4 Matriks Troubleshooting Cepat</h3>
+    <div class="table-responsive">
+      <table class="tech-table">
+        <thead>
+          <tr>
+            <th>Gejala Masalah</th>
+            <th>Kemungkinan Akar Penyebab</th>
+            <th>Tindakan Koreksi Cepat</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Motor bergetar keras tapi tidak berputar / hanya mendengung</strong></td>
+            <td>Urutan kabel fasa stepper tertukar atau Vref terlalu rendah (&lt;0.6V).</td>
+            <td>Pastikan Hitam-Hijau pada pin 1-2 (Fasa A) dan Merah-Biru pada pin 3-4 (Fasa B). Naikkan Vref trimpot ke 0.92V&ndash;0.95V.</td>
+          </tr>
+          <tr>
+            <td><strong>Shaker bergetar hebat / berjalan di meja pada RPM tinggi (&gt;180 RPM)</strong></td>
+            <td>Massa Counterweight kurang berat atau sudut meleset dari 180&deg; terhadap pin eksentrik.</td>
+            <td>Pastikan bandul counterweight (~500g) berada tepat berlawanan 180&deg; dari pin eksentrik platform. Pasang 4 kaki karet peredam.</td>
+          </tr>
+          <tr>
+            <td><strong>Layar LCD blank atau balok hitam penuh</strong></td>
+            <td>Trimpot kontras belum disetel atau alamat I2C salah.</td>
+            <td>Putar trimpot biru di belakang LCD dengan obeng minus. Cek apakah alamat I2C adalah <code class="inline-code">0x27</code> atau <code class="inline-code">0x3F</code> di <code class="inline-code">config.h</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>Motor mendadak lemas / mati setelah berputar 5&ndash;10 menit</strong></td>
+            <td>Driver TMC2209 mengalami <em>Over-Temperature Shutdown</em> akibat panas berlebih.</td>
+            <td>Periksa putaran Kipas 12V 5010, pastikan meniup heatsink langsung. Pastikan tegangan LM2596 stabil di 12.0V DC.</td>
+          </tr>
+          <tr>
+            <td><strong>Jam digital reset ke waktu kompilasi saat mati listrik</strong></td>
+            <td>Arduino Uno tidak memiliki modul baterai RTC fisik eksternal.</td>
+            <td>Sinkronisasi ulang via Serial PC (<code class="inline-code">TIME=14:30:00</code>) atau tekan tombol <code class="inline-code">D</code> pada keypad untuk menyetel jam &amp; menit.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SOP LAB -->
+    <div class="sop-box avoid-break">
+      <div class="sop-header">
+        <div class="sop-title">Standard Operating Procedure (SOP) Penggunaan Laboratorium</div>
+        <div class="sop-badge">SOP-LAB-SHK-001</div>
+      </div>
+      <ol class="step-list">
+        <li class="step-list-item">
+          <div class="step-badge">1</div>
+          <div class="step-text"><strong>Persiapan:</strong> Letakkan alat di permukaan meja yang datar. Pasang matras silikon anti-slip di atas meja atas. Letakkan wadah sampel (maks 1.5 kg) secara simetris dan kunci dengan klem/spring holder.</div>
+        </li>
+        <li class="step-list-item">
+          <div class="step-badge">2</div>
+          <div class="step-text"><strong>Nyalakan Daya:</strong> Tekan saklar power utama 220V. LCD menyala menampilkan Jam Digital dan status <code class="inline-code">RPM: 120 STANDBY</code>.</div>
+        </li>
+        <li class="step-list-item">
+          <div class="step-badge">3</div>
+          <div class="step-text"><strong>Mode Continuous:</strong> Atur RPM yang diinginkan via Knob Encoder atau ketik angka langsung di Keypad (misal: <code class="inline-code">200</code> lalu tekan <code class="inline-code">#</code>). Tekan switch knob Encoder atau tombol <code class="inline-code">C</code> untuk START. Tekan sekali lagi untuk STOP.</div>
+        </li>
+        <li class="step-list-item">
+          <div class="step-badge">4</div>
+          <div class="step-text"><strong>Mode Timer:</strong> Tekan tombol <code class="inline-code">A</code> pada keypad untuk beralih ke Mode Timer. Tekan <code class="inline-code">B</code> untuk menambah menit (atau ketik angka via keypad). Tekan <code class="inline-code">C</code> (START). Shaker akan berputar dan berhenti otomatis saat hitung mundur mencapai 00:00 disertai 4x bunyi alarm buzzer.</div>
+        </li>
+      </ol>
+    </div>
+
+    <!-- PREVENTIVE MAINTENANCE -->
+    <h3 class="sub-title">Jadwal Pemeliharaan Berkala (Preventive Maintenance)</h3>
+    <div class="table-responsive">
+      <table class="tech-table">
+        <thead>
+          <tr>
+            <th>Frekuensi</th>
+            <th>Item Inspeksi</th>
+            <th>Standar &amp; Tindakan Perawatan</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Harian</strong></td>
+            <td>Kebersihan Top Plate &amp; Silikon</td>
+            <td>Bersihkan tetesan cairan sampel kimia dengan kain lembap alkohol 70%.</td>
+          </tr>
+          <tr>
+            <td><strong>Mingguan</strong></td>
+            <td>Filter Kisi Kipas Pendingin</td>
+            <td>Bersihkan kisi-kisi udara pendingin dari tumpukan debu menggunakan kuas halus.</td>
+          </tr>
+          <tr>
+            <td><strong>Bulanan</strong></td>
+            <td>Ketegangan Belt GT2 &amp; Baut</td>
+            <td>Periksa defleksi sabuk (~2 mm) dan beri setetes Loctite 242 pada grub screw yang kendor.</td>
+          </tr>
+          <tr>
+            <td><strong>Per 6 Bulan</strong></td>
+            <td>Ball Bearing 608ZZ &amp; Vref</td>
+            <td>Teteskan 2 tetes pelumas sintetis PTFE pada bearing dan verifikasi Vref tetap 0.92V&ndash;0.95V.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SIGNOFF & QUALITY AUDIT -->
+    <div class="footer-signoff avoid-break">
+      <h3 style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin-bottom: 8px;">Lembar Pengesahan &amp; Quality Assurance (QA) Commissioning</h3>
+      <p style="font-size: 0.85rem; color: #64748b;">
+        Dengan menandatangani dokumen ini, seluruh tahapan kalibrasi tegangan 12V, penyetelan Vref 0.92V, perakitan mekanis eksentrik 10mm, counterweight balancing 500g, dan uji ketahanan 60 menit beban 1.5 kg telah dinyatakan LULUS (PASS) sesuai standar teknik mekatronika.
+      </p>
+
+      <div class="signoff-grid">
+        <div class="signoff-box">
+          <strong>Dirakit &amp; Dikalibrasi Oleh:</strong><br><br><br>
+          <span>( ............................................................ )</span><br>
+          <small>Lead Assembly &amp; Calibration Engineer</small>
+        </div>
+        <div class="signoff-box">
+          <strong>Diverifikasi &amp; Disetujui Oleh:</strong><br><br><br>
+          <span>( ............................................................ )</span><br>
+          <small>Laboratory Quality &amp; Safety Officer</small>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

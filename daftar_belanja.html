@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checklist Belanja - DIY Digital Orbital Shaker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --primary-hover: #0284c7;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --accent: #818cf8;
+      --strike-text: #64748b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text-main); padding: 24px 16px 80px; min-height: 100vh; line-height: 1.5; }
+    .container { max-width: 900px; margin: 0 auto; }
+
+    header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid var(--card-border); border-radius: 16px; padding: 28px; margin-bottom: 24px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); }
+    .badge-header { display: inline-flex; align-items: center; gap: 6px; background: rgba(56, 189, 248, 0.15); color: var(--primary); padding: 4px 12px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; border: 1px solid rgba(56, 189, 248, 0.3); }
+    h1 { font-size: 1.75rem; font-weight: 800; color: #fff; margin-bottom: 8px; }
+    .subtitle { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; }
+
+    .progress-section { background: rgba(15, 23, 42, 0.6); border-radius: 12px; padding: 16px; border: 1px solid var(--card-border); }
+    .progress-stats { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.9rem; font-weight: 600; }
+    .progress-track { width: 100%; height: 10px; background: #334155; border-radius: 999px; overflow: hidden; }
+    .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--success)); border-radius: 999px; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+
+    .toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+    .filter-tabs { display: flex; gap: 8px; background: var(--card-bg); padding: 4px; border-radius: 10px; border: 1px solid var(--card-border); }
+    .filter-btn { background: transparent; border: none; color: var(--text-muted); padding: 6px 14px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .filter-btn.active { background: var(--primary); color: #0f172a; }
+    .action-btn { background: #334155; border: none; color: var(--text-main); padding: 8px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: background 0.2s; }
+    .action-btn:hover { background: #475569; }
+
+    .section-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 20px; margin-bottom: 20px; }
+    .section-title { display: flex; align-items: center; gap: 10px; font-size: 1.15rem; font-weight: 700; color: #fff; padding-bottom: 14px; border-bottom: 1px solid var(--card-border); margin-bottom: 14px; }
+    .section-title span.count-tag { font-size: 0.75rem; background: #334155; color: var(--text-muted); padding: 2px 8px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; }
+
+    .item-list { display: flex; flex-direction: column; gap: 10px; }
+    .item-row { display: flex; align-items: flex-start; gap: 14px; padding: 14px; background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(51, 65, 85, 0.6); border-radius: 10px; transition: all 0.2s ease; cursor: pointer; }
+    .item-row:hover { background: rgba(15, 23, 42, 0.8); border-color: #475569; transform: translateY(-1px); }
+    .item-row.checked { background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.25); }
+
+    .checkbox-container { margin-top: 2px; position: relative; }
+    .custom-checkbox { width: 22px; height: 22px; border: 2px solid #64748b; border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; background: #0f172a; }
+    .item-row.checked .custom-checkbox { background: var(--success); border-color: var(--success); }
+    .custom-checkbox svg { width: 14px; height: 14px; stroke: #fff; stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; display: none; }
+    .item-row.checked .custom-checkbox svg { display: block; }
+
+    .item-content { flex: 1; }
+    .item-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+    .item-name { font-size: 0.98rem; font-weight: 700; color: var(--text-main); transition: color 0.2s; }
+    .item-row.checked .item-name { color: var(--strike-text); text-decoration: line-through; }
+
+    .badges { display: flex; gap: 6px; align-items: center; }
+    .tag { font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.03em; }
+    .tag-owned { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .tag-cart { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+    .tag-fix { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .tag-missing { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+    .item-spec { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; }
+    .item-row.checked .item-spec { color: var(--strike-text); }
+    .item-note { font-size: 0.8rem; color: #cbd5e1; background: rgba(30, 41, 59, 0.8); padding: 6px 10px; border-radius: 6px; border-left: 3px solid var(--primary); display: inline-block; margin-top: 4px; font-family: 'JetBrains Mono', monospace; }
+    .item-row.checked .item-note { opacity: 0.6; border-left-color: var(--strike-text); }
+
+    .info-footer { margin-top: 30px; padding: 16px; background: rgba(56, 189, 248, 0.05); border: 1px dashed rgba(56, 189, 248, 0.3); border-radius: 12px; font-size: 0.85rem; color: var(--text-muted); }
+    .info-footer strong { color: var(--primary); }
+
+    @media (max-width: 640px) { body { padding: 14px 10px; } header { padding: 18px; } h1 { font-size: 1.35rem; } .toolbar { flex-direction: column; align-items: stretch; } .filter-tabs { justify-content: center; } }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <header>
+      <div class="badge-header">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Proyek Orbital Shaker
+      </div>
+      <h1>Audit & Checklist Belanja Tokopedia</h1>
+      <p class="subtitle">Verifikasi Keranjang Tokopedia (CNC Store Bandung) • Status Real-Time</p>
+
+      <div class="progress-section">
+        <div class="progress-stats">
+          <span>Kesiapan Komponen (Keranjang + Rumah)</span>
+          <span id="progress-text" style="color: var(--primary)">0% (0 / 0)</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-bar"></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="toolbar">
+      <div class="filter-tabs">
+        <button class="filter-btn active" onclick="filterItems('all', this)">Semua (<span id="count-all">0</span>)</button>
+        <button class="filter-btn" onclick="filterItems('missing', this)">Kurang / Perlu Koreksi (<span id="count-missing">0</span>)</button>
+        <button class="filter-btn" onclick="filterItems('cart', this)">Ada di Keranjang (<span id="count-cart">0</span>)</button>
+      </div>
+
+      <button class="action-btn" onclick="resetChecklist()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Reset Checklist
+      </button>
+    </div>
+
+    <!-- Section: Koreksi & Barang yang Kurang -->
+    <div class="section-card" style="border-color: rgba(245, 158, 11, 0.4);">
+      <div class="section-title" style="color: #fbbf24;">
+        ⚠️ Perlu Dikoreksi / Belum Masuk Keranjang
+        <span class="count-tag" id="count-sec-fix" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24;">0/5</span>
+      </div>
+      <div class="item-list">
+
+        <!-- PSU 24V 5A -->
+        <div class="item-row" data-id="psu" data-status="missing" onclick="toggleItem('psu')">
+          <div class="checkbox-container">
+            <div class="custom-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+          </div>
+          <div class="item-content">
+            <div class="item-header">
+              <span class="item-name">Power Supply Switching 24V 5A Jaring (120W)</span>
+              <div class="badges"><span class="tag tag-missing">Belum Masuk Keranjang</span></div>
+            </div>
+            <div class="item-spec">Daya utama untuk motor stepper agar stabil di 300 RPM. Jangan lupa di-add to cart!</div>
+          </div>
+        </div>
+
+        <!-- CNC Shield V3 Fix -->
+        <div class="item-row" data-id="cnc_shield_fix" data-status="missing" onclick="toggleItem('cnc_shield_fix')">
+          <div class="checkbox-container">
+            <div class="custom-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+          </div>
+          <div class="item-content">
+            <div class="item-header">
+              <span class="item-name">Ganti CNC Shield V3 (Pilih "Board Only")</span>
+              <div class="badges"><span class="tag tag-fix">Koreksi Hemat Rp50k</span></div>
+            </div>
+            <div class="item-spec">Di keranjang kamu masuk paket "+ 4x A4988" (Rp71.500). Ganti ke varian <strong>Board Only (~Rp18.000)</strong> karena kamu sudah pakai TMC2209. Driver A4988-nya tidak terpakai.</div>
+          </div>
+        </div>
+
+        <!-- Terminal Block Qty -->
+        <div class="item-row" data-id="terminal_qty" data-status="missing" onclick="toggleItem('terminal_qty')">
+          <div class="checkbox-container">
+            <div class="custom-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+          </div>
+          <div class="item-content">
+            <div class="item-header">
+              <span class="item-name">Tambah Jumlah Terminal Block KF301-2P (Ubah Qty Jadi 4-5 Pcs)</span>
+              <div class="badges"><span class="tag tag-missing">Tambah Qty</span></div>
+            </div>
+            <div class="item-spec">Di keranjang baru 1 pcs (Rp700). Minimal butuh 4-5 pcs untuk percabangan listrik 24V, 12V, dan kipas.</div>
+          </div>
+        </div>
+
+        <!-- AWG 22 Merah -->
+        <div class="item-row" data-id="awg_merah" data-status="missing" onclick="toggleItem('awg_merah')">
+          <div class="checkbox-container">
+            <div class="custom-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+          </div>
+          <div class="item-content">
+            <div class="item-header">
+              <span class="item-name">Kabel Serabut AWG 22 Merah (2 Meter)</span>
+              <div class="badges"><span class="tag tag-missing">Tambahkan Warna Merah</span></div>
+            </div>
+            <div class="item-spec">Di keranjang baru ada kabel hitam & kuning. Wajib ada warna Merah untuk kutub positif (+) 24V agar tidak tertukar saat rakit.</div>
+          </div>
+        </div>
+
+        <!-- Ball Bearing 608ZZ -->
+        <div class="item-row" data-id="bearing_608" data-status="missing" onclick="toggleItem('bearing_608')">
+          <div class="checkbox-container">
+            <div class="custom-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+          </div>
+          <div class="item-content">
+            <div class="item-header">
+              <span class="item-name">Ball Bearing 608ZZ (6 - 8 Pcs)</span>
+              <div class="badges"><span class="tag tag-missing">Belum Masuk Keranjang</span></div>
+            </div>
+            <div class="item-spec">Untuk poros eksentrik meja dan bearing satelit idler. Cari "Bearing 608ZZ" di toko yang sama.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Section: Sudah Masuk Keranjang (Valid) -->
+    <div class="section-card">
+      <div class="section-title">
+        🛒 Sudah Benar di Keranjang Tokopedia
+        <span class="count-tag" id="count-sec-cart">0/10</span>
+      </div>
+      <div class="item-list">
+
+        <div class="item-row" data-id="cart_motor" data-status="cart" onclick="toggleItem('cart_motor')">
+          <div class="checkbox-container"><div class="custom-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div></div>
+          <div class="item-content">
+            <div class="item-header"><span class="item-name">NEMA 17 17HS4401 40mm 1.5A + Kabel (Rp83.616)</span><div class="badges"><span class="tag tag-cart">Keranjang</span></div></div>
+            <div class="item-spec">Torsi 40 N·cm, sudah termasuk kabel konektor.</div>
+          </div>
+        </div>
+
+        <div class="item-row" data-id="cart_tmc" data-status="cart" onclick="toggleItem('cart_tmc')">
+          <div class="checkbox-container"><div class="custom-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div></div>
+          <div class="item-content">
+            <div class="item-header"><span class="item-name">Driver MKS TMC2209 Silent Stepper (Rp74.200)</span><div class="badges"><span class="tag tag-cart">Keranjang</span></div></div>
+            <div class="item-spec">StealthChop2 hening, sudah lengkap dengan heatsink biru.</div>
+          </div>
+        </div>
+
+        <div class="item-row" data-id="cart_lcd" data-status="cart" onclick="toggleItem('cart_lcd')">
+          <div class="checkbox-container"><div class="custom-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div></div>
+          <div class="item-content">
+            <div class="item-header"><span class="item-name">LCD 1602 Hijau + I2C Backpack (Rp28.800)</span><div class="badges"><span class="tag tag-cart">Keranjang</span></div></div>
+            <div class="item-spec">Pilihan varian "Hijau + I2C" sudah sangat tepat (tinggal 4 kabel).</div>
+          </div>
+        </div>
+
+        <div class="item-row" data-id="cart_lm2596" data-status="cart" onclick="toggleItem('cart_lm2596')">
+          <div class="checkbox-container"><div class="custom-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div></div>
+          <div class="item-content">
+            <div class="item-header"><span class="item-name">Modul Step-Down LM2596 (Rp7.776)</span><div class="badges"><span class="tag tag-cart">Keranjang</span></div></div>
+            <div class="item-spec">Untuk turunkan 24V ke 12V menyuplai kipas 5010 & Arduino Uno.</div>
+          </div>
+        </div>
+
+        <div class="item-row" data-id="cart_encoder" data-status="cart" onclick="toggleItem('cart_encoder')">
+          <div class="checkbox-container"><div class="custom-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div></div>
+          <div class="item-content">
+            <div class="item-header"><span class="item-name">Rotary Encoder KY-040 Module (Rp7.900)</span><div class="badges"><span class="tag tag-cart">Keranjang</span></div></div>
+            <div class="item-spec">Pengatur RPM dan menu putar.</div>
+          </div>
+        </div>
+
+        <div class="item-row" data-id="cart_pulley_kit" data-status="cart" onclick="toggleItem('cart_pulley_kit')">
+          <div class="checkbox-container"><div class="custom-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div></div>
+          <div class="item-content">
+            <div class="item-header"><span class="item-name">Pulley 2GT Belt Kit 20T, 60T, Belt 280T (Rp76.800)</span><div class="badges"><span class="tag tag-cart">Keranjang</span></div></div>
+            <div class="item-spec">Panjang belt 280T (56cm) pas untuk boks meja.</div>
+          </div>
+        </div>
+
+        <div class="item-row" data-id="cart_pulley_extra" data-status="cart" onclick="toggleItem('cart_pulley_extra')">
+          <div class="checkbox-container"><div class="custom-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div></div>
+          <div class="item-content">
+            <div class="item-header"><span class="item-name">Pulley 20T Bore 5mm Tambahan (Rp9.200)</span><div class="badges"><span class="tag tag-cart">Keranjang</span></div></div>
+            <div class="item-spec">Pilihan cerdas untuk membuat transmisi rasio 1:1 (20T ke 20T).</div>
+          </div>
+        </div>
+
+        <div class="item-row" data-id="cart_jumper_mf" data-status="cart" onclick="toggleItem('cart_jumper_mf')">
+          <div class="checkbox-container"><div class="custom-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div></div>
+          <div class="item-content">
+            <div class="item-header"><span class="item-name">40pcs Kabel Jumper 15cm Male-to-Female (Rp12.500)</span><div class="badges"><span class="tag tag-cart">Keranjang</span></div></div>
+            <div class="item-spec">Untuk LCD I2C, Encoder, dan Keypad.</div>
+          </div>
+        </div>
+
+        <div class="item-row" data-id="cart_jumper_mm" data-status="cart" onclick="toggleItem('cart_jumper_mm')">
+          <div class="checkbox-container"><div class="custom-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div></div>
+          <div class="item-content">
+            <div class="item-header"><span class="item-name">40pcs Kabel Jumper 40cm Male-to-Male (Rp20.500)</span><div class="badges"><span class="tag tag-cart">Keranjang</span></div></div>
+            <div class="item-spec">Untuk sambungan jumper breadboard.</div>
+          </div>
+        </div>
+
+        <div class="item-row" data-id="cart_motor_cable" data-status="cart" onclick="toggleItem('cart_motor_cable')">
+          <div class="checkbox-container"><div class="custom-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div></div>
+          <div class="item-content">
+            <div class="item-header"><span class="item-name">Kabel Jumper Motor Stepper 100cm (Rp9.000)</span><div class="badges"><span class="tag tag-cart">Keranjang</span></div></div>
+            <div class="item-spec">Kabel ekstra panjang untuk motor stepper.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Section: Barang Milik Pribadi di Rumah -->
+    <div class="section-card">
+      <div class="section-title">
+        🏠 Sudah Ada di Rumah (Tidak Perlu Beli)
+        <span class="count-tag" id="count-sec-owned">3/3</span>
+      </div>
+      <div class="item-list">
+
+        <div class="item-row checked" data-id="own_arduino" data-status="owned" onclick="toggleItem('own_arduino')">
+          <div class="checkbox-container"><div class="custom-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div></div>
+          <div class="item-content">
+            <div class="item-header"><span class="item-name">Arduino Uno R3 + Kabel Data</span><div class="badges"><span class="tag tag-owned">Sudah Ada</span></div></div>
+          </div>
+        </div>
+
+        <div class="item-row checked" data-id="own_fan" data-status="owned" onclick="toggleItem('own_fan')">
+          <div class="checkbox-container"><div class="custom-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div></div>
+          <div class="item-content">
+            <div class="item-header"><span class="item-name">DC Brushless Fan 12V 5010</span><div class="badges"><span class="tag tag-owned">Sudah Ada</span></div></div>
+          </div>
+        </div>
+
+        <div class="item-row checked" data-id="own_keypad" data-status="owned" onclick="toggleItem('own_keypad')">
+          <div class="checkbox-container"><div class="custom-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div></div>
+          <div class="item-content">
+            <div class="item-header"><span class="item-name">Keypad Matriks 4x4 8-Pin Tipis</span><div class="badges"><span class="tag tag-owned">Sudah Ada</span></div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="info-footer">
+      <strong>💡 Tips Hemat:</strong> Cek item di bagian kuning (perlu dikoreksi) sebelum klik tombol bayar di Tokopedia agar tidak ada part yang mubazir atau terlewat.
+    </div>
+
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'orbital_shaker_cart_audit_state';
+    let checkedState = {};
+
+    function loadState() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        checkedState = JSON.parse(saved);
+      } else {
+        document.querySelectorAll('.item-row[data-status="owned"], .item-row[data-status="cart"]').forEach(row => {
+          checkedState[row.dataset.id] = true;
+        });
+        saveState();
+      }
+      applyState();
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(checkedState));
+    }
+
+    function applyState() {
+      const allRows = document.querySelectorAll('.item-row');
+      allRows.forEach(row => {
+        const id = row.dataset.id;
+        if (checkedState[id]) {
+          row.classList.add('checked');
+        } else {
+          row.classList.remove('checked');
+        }
+      });
+      updateStats();
+    }
+
+    function toggleItem(id) {
+      checkedState[id] = !checkedState[id];
+      saveState();
+      applyState();
+    }
+
+    function updateStats() {
+      const allRows = document.querySelectorAll('.item-row');
+      const total = allRows.length;
+      let checkedCount = 0;
+      let missingTotal = 0, missingChecked = 0;
+      let cartTotal = 0, cartChecked = 0;
+      let missingCount = 0, cartCount = 0;
+
+      allRows.forEach(row => {
+        const id = row.dataset.id;
+        const isChecked = !!checkedState[id];
+        const status = row.dataset.status;
+
+        if (status === 'missing') { missingTotal++; if(isChecked) missingChecked++; missingCount++; }
+        else if (status === 'cart') { cartTotal++; if(isChecked) cartChecked++; cartCount++; }
+
+        if (isChecked) checkedCount++;
+      });
+
+      const percent = total > 0 ? Math.round((checkedCount / total) * 100) : 0;
+      document.getElementById('progress-bar').style.width = percent + '%';
+      document.getElementById('progress-text').innerText = `${percent}% (${checkedCount} / ${total} Siap)`;
+
+      document.getElementById('count-all').innerText = total;
+      document.getElementById('count-missing').innerText = missingCount;
+      document.getElementById('count-cart').innerText = cartCount;
+
+      document.getElementById('count-sec-fix').innerText = `${missingChecked}/${missingTotal}`;
+      document.getElementById('count-sec-cart').innerText = `${cartChecked}/${cartTotal}`;
+    }
+
+    function filterItems(type, btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const allRows = document.querySelectorAll('.item-row');
+      allRows.forEach(row => {
+        const status = row.dataset.status;
+        if (type === 'all') {
+          row.style.display = 'flex';
+        } else if (type === 'missing') {
+          row.style.display = status === 'missing' ? 'flex' : 'none';
+        } else if (type === 'cart') {
+          row.style.display = status === 'cart' ? 'flex' : 'none';
+        }
+      });
+    }
+
+    function resetChecklist() {
+      if (confirm('Yakin ingin mereset seluruh centang checklist?')) {
+        checkedState = {};
+        document.querySelectorAll('.item-row[data-status="owned"]').forEach(row => {
+          checkedState[row.dataset.id] = true;
+        });
+        saveState();
+        applyState();
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', loadState);
+  </script>
+</body>
+</html>

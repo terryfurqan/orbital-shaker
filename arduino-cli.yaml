@@ -1,0 +1,11 @@
+board_manager:
+  additional_urls: []
+daemon:
+  port: "50051"
+logging:
+  level: info
+  format: text
+output:
+  no_color: false
+sketch:
+  always_export_binaries: false
