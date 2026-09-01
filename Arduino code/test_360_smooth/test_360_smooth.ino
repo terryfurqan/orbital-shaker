@@ -1,18 +1,16 @@
 /**
  * ============================================================================
- * DIY ORBITAL SHAKER - UJI PUTARAN 360 DERAJAT HALUS (SMOOTH TRAPEZOIDAL RAMP)
+ * DIY ORBITAL SHAKER - UJI PUTARAN 360 DERAJAT MURNI (PROVEN 40us/585us ENGINE)
  * ============================================================================
- * Sketsa uji presisi untuk memutar motor NEMA 17 tepat 1 putaran penuh (360 derajat)
- * dengan pergerakan sehalus sutra (silky smooth) tanpa getaran "brrrp".
+ * Sketsa perbaikan murni 360 derajat (3.200 microstep).
  *
- * Rahasia Kehalusan:
- * 1. ZERO I/O JITTER: Tidak ada panggilan lcd.print() atau Serial.print() di dalam
- *    loop pulsa langkah. Hal ini mencegah jeda 2 milidetik yang merusak StealthChop2.
- * 2. TRAPEZOIDAL ACCELERATION RAMP:
- *    - Ramp Up (800 langkah / 90 deg): Meluncur lembut dari 7.5 RPM ke 30 RPM.
- *    - Cruise (1600 langkah / 180 deg): Kecepatan konstan stabil 30 RPM.
- *    - Ramp Down (800 langkah / 90 deg): Melambat mulus dari 30 RPM ke 7.5 RPM lalu berhenti.
- *    Total = Tepat 3.200 microsteps = Tepat 360.0 derajat.
+ * Menggunakan timing yang SUDAH TERBUKTI BERHASIL memutar motor pada uji 1000 step:
+ * - PULSE_HIGH_US : 40 mikrodetik (TIDAK BOLEH dikurangi karena redaman kabel)
+ * - PULSE_LOW_US  : 585 mikrodetik (Kecepatan teruji 30 RPM = 1600 Hz)
+ * - TOTAL_STEPS   : 3.200 pulsa = Tepat 360.0 derajat (1 putaran penuh)
+ * - DURASI GERAK  : Tepat 2.0 detik penuh (3200 x 625 us)
+ * - ZERO JITTER   : LCD hanya diupdate SEBELUM dan SESUDAH putaran selesai.
+ *                   TIDAK ADA interupsi lcd.print() di tengah jalan!
  * ============================================================================
  */
 
@@ -20,9 +18,9 @@
 #include <LiquidCrystal.h>
 
 // --- PIN HARDWARE ---
-#define PIN_STEP        2   // Sinyal pulsa ke TMC2209
-#define PIN_DIR         3   // Sinyal arah (HIGH = Maju)
-#define PIN_ENABLE      A1  // Sinyal daya (Active LOW: LOW = ON, HIGH = Standby)
+#define PIN_STEP        2   // Sinyal pulsa ke TMC2209 (PORTD2)
+#define PIN_DIR         3   // Sinyal arah putaran (HIGH = Maju)
+#define PIN_ENABLE      A1  // Sinyal kran daya (Active LOW: LOW = ON, HIGH = Standby)
 #define PIN_BUZZER      A2  // Indikator audio
 #define PIN_BTN_SHIELD  A0  // Resistor ladder tombol Keypad Shield
 
@@ -37,18 +35,10 @@
 
 LiquidCrystal lcd(PIN_LCD_RS, PIN_LCD_EN, PIN_LCD_D4, PIN_LCD_D5, PIN_LCD_D6, PIN_LCD_D7);
 
-// --- KONFIGURASI PROFIL GERAK 360 DERAJAT ---
+// Parameter pulsa yang TERBUKTI bekerja pada hardware ini
+#define PULSE_HIGH_US   40
+#define PULSE_LOW_US    585
 #define TOTAL_STEPS     3200UL // 1 putaran penuh pada 1/16 microstep (360 derajat)
-#define RAMP_STEPS      800UL  // 90 derajat akselerasi & 90 derajat deselerasi
-#define CRUISE_STEPS    1600UL // 180 derajat kecepatan jelajah
-
-#define PULSE_HIGH_US   20     // Lebar pulsa HIGH yang solid & efisien
-
-// Timing Pulsa (Mikrodetik):
-// 7.5 RPM  -> Periode 2500 us (Start lembut)
-// 30.0 RPM -> Periode 625 us  (Cruise kecepatan normal)
-#define START_PERIOD_US   2500UL
-#define CRUISE_PERIOD_US  625UL
 
 void playBeep(int ms) {
   digitalWrite(PIN_BUZZER, HIGH);
@@ -68,87 +58,66 @@ void setup() {
 
   // Set kondisi awal aman: motor lemas, driver dingin
   digitalWrite(PIN_STEP, LOW);
-  digitalWrite(PIN_DIR, HIGH);
-  digitalWrite(PIN_ENABLE, HIGH);
+  digitalWrite(PIN_DIR, HIGH);     // Arah maju
+  digitalWrite(PIN_ENABLE, HIGH);  // Driver Standby (motor bebas, driver dingin)
 
   // 2. Inisialisasi LCD
   pinMode(PIN_LCD_BL, OUTPUT);
-  digitalWrite(PIN_LCD_BL, HIGH);
+  digitalWrite(PIN_LCD_BL, HIGH);  // Backlight ON
   lcd.begin(16, 2);
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("360 DEG SMOOTH  ");
+  lcd.print("360 DEG PUTARAN ");
   lcd.setCursor(0, 1);
   lcd.print("TEKAN SELECT    ");
 
   Serial.println(F("=================================================="));
-  Serial.println(F(" DIY ORBITAL SHAKER - UJI 360 DERAJAT HALUS (RAMP)"));
+  Serial.println(F(" DIY ORBITAL SHAKER - UJI 360 DERAJAT MURNI       "));
   Serial.println(F("=================================================="));
-  Serial.println(F(" Tekan SELECT untuk memutar 360 derajat halus...  "));
+  Serial.println(F(" Pulsa: 40 us HIGH / 585 us LOW (30 RPM Teruji)   "));
+  Serial.println(F(" Total: 3.200 Microsteps = 1 Putaran Penuh (360°) "));
+  Serial.println(F(" Durasi: 2.0 Detik Murni (Zero LCD Interruption)  "));
+  Serial.println(F("=================================================="));
 
   playBeep(80);
 }
 
-void rotate360Smooth() {
-  Serial.println(F("[START] Memulai putaran 360 derajat (Trapezoidal Ramp)..."));
-  playBeep(50);
+void rotate360Clean() {
+  Serial.println(F("\n[AKSI] Memulai putaran 360 derajat murni (3.200 step)..."));
+  playBeep(40);
 
-  // 1. Perbarui tampilan SEBELUM motor bergerak (agar tidak mengganggu pulsa)
+  // 1. Tampilkan status di LCD SEBELUM motor bergerak
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("PUTAR 360 DERAJAT");
+  lcd.print("BERPUTAR 360 DEG");
   lcd.setCursor(0, 1);
-  lcd.print("RAMP->CRUISE->STP");
+  lcd.print("3200 STEP (2.0s)");
 
-  // 2. Aktifkan driver (Active LOW)
+  // 2. Buka kran daya motor (LOW = Driver ON)
   digitalWrite(PIN_ENABLE, LOW);
-  delay(60); // Waktu stabilisasi charge pump TMC2209
+  delay(50); // Waktu bangun driver TMC2209
 
-  // 3. EKSEKUSI 3.200 LANGKAH DENGAN TIMING MURNI TANPA INTERUPSI
-  //    Fase 1: Ramp Up (0 s.d. 799)
-  //    Fase 2: Cruise  (800 s.d. 2399)
-  //    Fase 3: Ramp Down (2400 s.d. 3199)
+  // 3. STREAMING PULSA MURNI 3.200 LANGKAH TANPA GANGGUAN I/O LCD/SERIAL
   for (uint32_t i = 0; i < TOTAL_STEPS; i++) {
-    uint32_t periodUs;
-
-    if (i < RAMP_STEPS) {
-      // Akselerasi: periode turun dari 2500 us ke 625 us
-      uint32_t delta = (START_PERIOD_US - CRUISE_PERIOD_US) * i / RAMP_STEPS;
-      periodUs = START_PERIOD_US - delta;
-    } else if (i < (RAMP_STEPS + CRUISE_STEPS)) {
-      // Kecepatan jelajah stabil: 625 us
-      periodUs = CRUISE_PERIOD_US;
-    } else {
-      // Deselerasi: periode naik dari 625 us kembali ke 2500 us
-      uint32_t stepInDecel = i - (RAMP_STEPS + CRUISE_STEPS);
-      uint32_t delta = (START_PERIOD_US - CRUISE_PERIOD_US) * stepInDecel / RAMP_STEPS;
-      periodUs = CRUISE_PERIOD_US + delta;
-    }
-
-    uint32_t lowUs = (periodUs > PULSE_HIGH_US) ? (periodUs - PULSE_HIGH_US) : 2;
-
-    // Tembakan pulsa murni
     digitalWrite(PIN_STEP, HIGH);
     delayMicroseconds(PULSE_HIGH_US);
     digitalWrite(PIN_STEP, LOW);
-    delayMicroseconds(lowUs);
+    delayMicroseconds(PULSE_LOW_US);
   }
 
-  // 4. Matikan kran daya motor seketika setelah 360 derajat selesai
-  digitalWrite(PIN_ENABLE, HIGH);
+  // 4. Matikan kran daya seketika setelah step 3.200 selesai
+  digitalWrite(PIN_ENABLE, HIGH); // Standby (motor lemas, driver dingin)
 
-  // 5. Perbarui tampilan SETELAH motor selesai bergerak
+  // 5. Tampilkan status SELESAI di LCD setelah motor berhenti
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("360 DEG SELESAI!");
   lcd.setCursor(0, 1);
   lcd.print("TEKAN SELECT LG ");
 
-  Serial.println(F("[DONE] 3.200 microstep selesai. Tepat 1 putaran penuh (360 derajat)."));
-  Serial.println(F("Driver kembali STANDBY (dingin).\n"));
+  Serial.println(F("[SELESAI] 3.200 langkah selesai sempurna (360 derajat)."));
+  Serial.println(F("Driver kembali standby (dingin). Tekan SELECT untuk mengulang.\n"));
 
-  playBeep(80);
-  delay(120);
   playBeep(80);
 }
 
@@ -157,20 +126,20 @@ void loop() {
 
   // Tombol SELECT (ADC ~650 - 900)
   if (adc > 650 && adc < 900) {
-    // Tunggu sampai tombol benar-benar dilepas (anti-bouncing total)
+    // Tunggu sampai tombol benar-benar dilepas oleh jari
     while (analogRead(PIN_BTN_SHIELD) < 920) {
       delay(10);
     }
-    delay(50);
+    delay(50); // Debounce jeda
 
-    rotate360Smooth();
+    rotate360Clean();
   }
 
-  // Serial listener: kirim 'g' atau spasi dari Serial Monitor
+  // Serial listener: kirim 'g' dari serial monitor jika ingin memicu via PC
   if (Serial.available() > 0) {
     char c = Serial.read();
     if (c == 'g' || c == 'G' || c == ' ') {
-      rotate360Smooth();
+      rotate360Clean();
     }
   }
 

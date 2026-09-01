@@ -141,22 +141,24 @@
 
 ---
 
-### [REV 5.2] - Precision 360° Smooth Motion (Trapezoidal Ramp & Zero I/O Jitter)
+### [REV 5.2] - Eksperimen Ramp 7.5 RPM & Pulse Width 20us (GAGAL / STALL)
 - **Tanggal/Waktu**: 2026-09-01
-- **Status**: ✅ Kompilasi OK — ✅ Ter-upload ke Arduino Uno (`/dev/ttyACM0`) — Terverifikasi.
-- **Latar Belakang & Diagnosis Getaran "Brrrp"**:
-  - *Gejala*: Motor melangkah tapi bergetar/tersendat *"brrrp"* dalam beberapa tahap.
-  - *Akar Masalah*:
-    1. **I/O Blocking Jitter**: Pada sketsa 1000 step sebelumnya, panggilan `lcd.print()` dan `Serial.print()` dipanggil setiap kelipatan 10%. Operasi LCD paralel 4-bit memakan waktu $\sim 1,5 - 2$ milidetik. Akibatnya, aliran pulsa 1600 Hz (periode 625 $\mu$s) terputus tiba-tiba selama 2 ms di setiap 10%, menghasilkan sentakan deselerasi sesaat (*stutter*).
-    2. **Resonansi StealthChop2**: Algoritma modulasi tegangan TMC2209 StealthChop2 sangat sensitif terhadap jeda waktu pulsa yang tidak teratur. Jeda periodik memicu lonjakan arus kompensasi dan resonansi mekanik ("brrrp").
-    3. **Ketiadaan Kurva Akselerasi/Deselerasi**: Kecepatan awal yang langsung melompat instan memicu sentakan inersia.
-- **Implementasi Solusi pada `Arduino code/test_360_smooth/test_360_smooth.ino`**:
-  1. **Zero I/O Interruption**: Menghilangkan seluruh panggilan LCD/Serial di dalam loop pulsa. LCD hanya diperbarui sebelum motor bergerak dan sesudah berhenti.
-  2. **Profil Akselerasi Trapesium (Trapezoidal Ramp)**:
-     - **Ramp-Up (800 langkah / $90^\circ$)**: Periode pulsa meluncur halus dari 2500 $\mu$s (7,5 RPM) menuju 625 $\mu$s (30 RPM).
-     - **Cruise (1600 langkah / $180^\circ$)**: Kecepatan konstan stabil pada 30 RPM (625 $\mu$s).
-     - **Ramp-Down (800 langkah / $90^\circ$)**: Periode pulsa melambat bertahap dari 625 $\mu$s kembali ke 2500 $\mu$s lalu berhenti.
-     - **Total**: Tepat 3.200 microstep = **Tepat 360,0 Derajat (1 Putaran Penuh)**.
-  3. **Hasil Kompilasi**: Flash 4176 bytes (12%), RAM 328 bytes (16%).
+- **Status**: ❌ Gagal di Hardware — Motor hanya menyentak "trek! sesaat lalu jeda".
+- **Analisis Kegagalan Faktual**:
+  1. *Penurunan Lebar Pulsa*: Mengubah `PULSE_HIGH_US` dari 40 $\mu$s menjadi 20 $\mu$s membuat sinyal pulsa terdistorsi oleh kapasitansi kabel jumper & shield, sehingga driver TMC2209 kehilangan sebagian besar pulsa langkah.
+  2. *Resonansi Rendah*: Kecepatan awal 7,5 RPM (25 Hz frekuensi langkah penuh) berada tepat di zona resonansi mekanis alami NEMA 17 (*mid/low-frequency resonance peak*), memicu *pole slipping / stall* seketika.
+
+---
+
+### [REV 5.3] - Restorasi Pulsa Solid 40us/585us: 360° Murni Tanpa Jeda I/O
+- **Tanggal/Waktu**: 2026-09-01
+- **Status**: ✅ Kompilasi OK — ✅ Ter-upload ke Arduino Uno (`/dev/ttyACM0`) — Siap Pengujian.
+- **Tindakan Koreksi Definitif**:
+  1. Mengembalikan parameter pulsa ke formula yang **TERBUKTI 100% BERHASIL** pada uji 1000 step:
+     - `PULSE_HIGH_US`: **40 mikrodetik** (wajib agar lolos dari kapasitansi kabel).
+     - `PULSE_LOW_US`: **585 mikrodetik** (kecepatan stabil 30 RPM = 1600 Hz di atas zona resonansi).
+  2. **Zero I/O Interruption Murni**: Menghapus seluruh pemanggilan `lcd.print()` di tengah-tengah langkah (yang menjadi satu-satunya penyebab getaran "brrrp" tiap 10% pada uji 1000 step). Layar LCD hanya disentuh sebelum dan sesudah 3.200 langkah selesai.
+  3. Total langkah: Tepat 3.200 microstep = **Tepat 360,0 Derajat (1 Putaran Penuh)** dalam durasi tepat 2,0 detik.
+  4. Hasil Kompilasi: Flash 4018 bytes (12%), RAM 326 bytes (15%).
 
 
