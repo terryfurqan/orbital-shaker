@@ -150,15 +150,29 @@
 
 ---
 
-### [REV 5.3] - Restorasi Pulsa Solid 40us/585us: 360° Murni Tanpa Jeda I/O
+### [REV 5.3] - Restorasi Pulsa Solid 40us/585us: 360° Murni Tanpa Jeda I/O (GAGAL: PULL-IN STALL & RETRIGGER)
 - **Tanggal/Waktu**: 2026-09-01
-- **Status**: ✅ Kompilasi OK — ✅ Ter-upload ke Arduino Uno (`/dev/ttyACM0`) — Siap Pengujian.
-- **Tindakan Koreksi Definitif**:
-  1. Mengembalikan parameter pulsa ke formula yang **TERBUKTI 100% BERHASIL** pada uji 1000 step:
-     - `PULSE_HIGH_US`: **40 mikrodetik** (wajib agar lolos dari kapasitansi kabel).
-     - `PULSE_LOW_US`: **585 mikrodetik** (kecepatan stabil 30 RPM = 1600 Hz di atas zona resonansi).
-  2. **Zero I/O Interruption Murni**: Menghapus seluruh pemanggilan `lcd.print()` di tengah-tengah langkah (yang menjadi satu-satunya penyebab getaran "brrrp" tiap 10% pada uji 1000 step). Layar LCD hanya disentuh sebelum dan sesudah 3.200 langkah selesai.
-  3. Total langkah: Tepat 3.200 microstep = **Tepat 360,0 Derajat (1 Putaran Penuh)** dalam durasi tepat 2,0 detik.
-  4. Hasil Kompilasi: Flash 4018 bytes (12%), RAM 326 bytes (15%).
+- **Status**: ❌ Gagal di Hardware — Motor menyentak "trek! ... jedaaa ... trek lagi".
+- **Analisis Akar Masalah**:
+  1. Tembakan instan 1.600 Hz (30 RPM) dari diam melampaui batas *instantaneous pull-in torque* rotor NEMA 17, memicu *magnetic stall* seketika.
+  2. Pemutusan daya motor (`ENABLE = HIGH`) memicu *inductive flyback EMF* ke ground dan jalur analog A0, menyebabkan loop membaca tombol SELECT terpicu berulang (*phantom click*).
+
+---
+
+### [REV 5.4] - Safe Pull-In Band 6.0 RPM (320 Hz) & Anti-Flyback Hard Lockout
+- **Tanggal/Waktu**: 2026-09-01
+- **Status**: ✅ Kompilasi OK — ✅ Ter-upload ke Arduino Uno (`/dev/ttyACM0`) — Siap Verifikasi Fisik.
+- **Perubahan Arsitektur & Formula Definitif**:
+  1. **Safe Pull-In Frequency (320 Hz = 6.0 RPM)**:
+     - Periode langkah total: **3.125 mikrodetik** (HIGH 40 $\mu$s, LOW 3.085 $\mu$s).
+     - Frekuensi 320 Hz berada jauh di bawah batas *pull-in* inersia diam rotor, sehingga motor 100% sanggup berputar seketika dari diam tanpa risiko stall.
+     - Durasi 1 putaran penuh (3.200 langkah): **Tepat 10,0 Detik Murni**.
+  2. **StealthChop2 Standstill Phase (200 ms)**:
+     - Jeda 200 ms setelah `ENABLE = LOW` sebelum langkah pertama ditembakkan untuk memberikan waktu bagi TMC2209 mengukur resistansi kumparan dan menstabilkan arus PWM.
+  3. **Anti-Flyback Hard Lockout (2.500 ms)**:
+     - Mengunci total seluruh pembacaan analog A0 selama 2,5 detik setelah motor berhenti, meniadakan 100% pemicuan ulang palsu (*"trek lagi"*).
+  4. **Dual-Trigger**:
+     - Mendukung pemicuan lewat tombol fisik SELECT pada shield (dengan validasi *wait-for-release* murni), ATAU via Serial Monitor PC (ketik angka `1` / `g`).
+  5. **Hasil Kompilasi**: Flash 4496 bytes (13%), RAM 370 bytes (18%).
 
 

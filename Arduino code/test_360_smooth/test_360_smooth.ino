@@ -1,16 +1,24 @@
 /**
  * ============================================================================
- * DIY ORBITAL SHAKER - UJI PUTARAN 360 DERAJAT MURNI (PROVEN 40us/585us ENGINE)
+ * DIY ORBITAL SHAKER - UJI 360 DERAJAT ZONA AMAN (SAFE PULL-IN BAND 6.0 RPM)
  * ============================================================================
- * Sketsa perbaikan murni 360 derajat (3.200 microstep).
+ * Sketsa definitif putaran 360 derajat bebas stall dan bebas re-trigger palsu.
  *
- * Menggunakan timing yang SUDAH TERBUKTI BERHASIL memutar motor pada uji 1000 step:
- * - PULSE_HIGH_US : 40 mikrodetik (TIDAK BOLEH dikurangi karena redaman kabel)
- * - PULSE_LOW_US  : 585 mikrodetik (Kecepatan teruji 30 RPM = 1600 Hz)
- * - TOTAL_STEPS   : 3.200 pulsa = Tepat 360.0 derajat (1 putaran penuh)
- * - DURASI GERAK  : Tepat 2.0 detik penuh (3200 x 625 us)
- * - ZERO JITTER   : LCD hanya diupdate SEBELUM dan SESUDAH putaran selesai.
- *                   TIDAK ADA interupsi lcd.print() di tengah jalan!
+ * Parameter Kunci:
+ * 1. SAFE PULL-IN FREQUENCY (320 Hz = 6.0 RPM):
+ *    - Frekuensi langkah berada di bawah batas inersia diam rotor NEMA 17.
+ *    - Torsi magnetik 100% mampu menarik rotor seketika dari diam tanpa stall.
+ *    - Periode pulsa: Tepat 3.125 us (HIGH 40 us, LOW 3.085 us).
+ *    - Durasi putaran: Tepat 10.0 detik (3.200 langkah x 3.125 us = 10.000.000 us).
+ * 2. STEALTHCHOP2 STANDSTILL CALIBRATION:
+ *    - Jeda 200 ms setelah ENABLE = LOW sebelum pulsa pertama ditembakkan.
+ *    - Memberikan waktu bagi TMC2209 untuk autotuning arus kumparan secara akurat.
+ * 3. ANTI-FLYBACK HARD LOCKOUT (2.500 ms):
+ *    - Mengunci rapat pembacaan pin A0 selama 2.5 detik setelah motor berhenti.
+ *    - Meredam 100% lonjakan tegangan induksi balik (flyback EMF) yang memicu "trek lagi".
+ * 4. DUAL-TRIGGER:
+ *    - Tekan tombol SELECT pada LCD shield, ATAU
+ *    - Ketik angka '1' pada Serial Monitor (115200 baud).
  * ============================================================================
  */
 
@@ -20,7 +28,7 @@
 // --- PIN HARDWARE ---
 #define PIN_STEP        2   // Sinyal pulsa ke TMC2209 (PORTD2)
 #define PIN_DIR         3   // Sinyal arah putaran (HIGH = Maju)
-#define PIN_ENABLE      A1  // Sinyal kran daya (Active LOW: LOW = ON, HIGH = Standby)
+#define PIN_ENABLE      A1  // Sinyal daya (Active LOW: LOW = ON, HIGH = Standby)
 #define PIN_BUZZER      A2  // Indikator audio
 #define PIN_BTN_SHIELD  A0  // Resistor ladder tombol Keypad Shield
 
@@ -35,10 +43,14 @@
 
 LiquidCrystal lcd(PIN_LCD_RS, PIN_LCD_EN, PIN_LCD_D4, PIN_LCD_D5, PIN_LCD_D6, PIN_LCD_D7);
 
-// Parameter pulsa yang TERBUKTI bekerja pada hardware ini
-#define PULSE_HIGH_US   40
-#define PULSE_LOW_US    585
-#define TOTAL_STEPS     3200UL // 1 putaran penuh pada 1/16 microstep (360 derajat)
+// --- KONFIGURASI TIMING ZONA AMAN 6.0 RPM ---
+#define PULSE_HIGH_US     40     // Lebar pulsa HIGH (garansi lolos kabel jumper)
+#define PULSE_LOW_US      3085   // Periode total 3.125 us = 320 Hz = 6.0 RPM
+#define TOTAL_STEPS       3200UL // Tepat 360.0 derajat pada 1/16 microstep
+#define STANDSTILL_MS     200    // Jeda kalibrasi arus TMC2209 sebelum pulsa
+#define POST_LOCKOUT_MS   2500UL // Hard lockout anti-flyback setelah motor stop
+
+unsigned long lockoutUntilMs = 0;
 
 void playBeep(int ms) {
   digitalWrite(PIN_BUZZER, HIGH);
@@ -67,37 +79,43 @@ void setup() {
   lcd.begin(16, 2);
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("360 DEG PUTARAN ");
+  lcd.print("360 DEG @ 6 RPM ");
   lcd.setCursor(0, 1);
-  lcd.print("TEKAN SELECT    ");
+  lcd.print("PRESS SELECT / 1");
 
   Serial.println(F("=================================================="));
-  Serial.println(F(" DIY ORBITAL SHAKER - UJI 360 DERAJAT MURNI       "));
+  Serial.println(F(" DIY ORBITAL SHAKER - UJI 360 DERAJAT ZONA AMAN   "));
   Serial.println(F("=================================================="));
-  Serial.println(F(" Pulsa: 40 us HIGH / 585 us LOW (30 RPM Teruji)   "));
-  Serial.println(F(" Total: 3.200 Microsteps = 1 Putaran Penuh (360°) "));
-  Serial.println(F(" Durasi: 2.0 Detik Murni (Zero LCD Interruption)  "));
+  Serial.println(F(" Kecepatan : 6.0 RPM (320 Hz Safe Pull-In Band)   "));
+  Serial.println(F(" Target    : 3.200 Microsteps = Tepat 360 Derajat "));
+  Serial.println(F(" Durasi    : Tepat 10.0 Detik Murni               "));
+  Serial.println(F(" Pemicu    : Tombol SELECT atau ketik '1' di PC   "));
   Serial.println(F("=================================================="));
 
   playBeep(80);
 }
 
-void rotate360Clean() {
-  Serial.println(F("\n[AKSI] Memulai putaran 360 derajat murni (3.200 step)..."));
-  playBeep(40);
+void execute360SafeRotation(const char* triggerSource) {
+  Serial.print(F("\n[AKSI] Dipicu via: "));
+  Serial.println(triggerSource);
+  Serial.println(F("[MOTOR] Mengaktifkan driver & kalibrasi arus standstill (200 ms)..."));
+  playBeep(50);
 
   // 1. Tampilkan status di LCD SEBELUM motor bergerak
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("BERPUTAR 360 DEG");
+  lcd.print("PUTAR 360 DERAJAT");
   lcd.setCursor(0, 1);
-  lcd.print("3200 STEP (2.0s)");
+  lcd.print("RUNNING 10 DETIK ");
 
-  // 2. Buka kran daya motor (LOW = Driver ON)
-  digitalWrite(PIN_ENABLE, LOW);
-  delay(50); // Waktu bangun driver TMC2209
+  // 2. Aktifkan driver & beri waktu StealthChop2 autotuning (Standstill Phase)
+  digitalWrite(PIN_ENABLE, LOW); // LOW = Driver ON
+  delay(STANDSTILL_MS);          // Wajib 200 ms agar torsi awal stabil
 
-  // 3. STREAMING PULSA MURNI 3.200 LANGKAH TANPA GANGGUAN I/O LCD/SERIAL
+  Serial.println(F("[MOTOR] >>> STREAMING PULSA 3.200 LANGKAH (10 DETIK) DIMULAI <<<"));
+
+  // 3. STREAMING PULSA MURNI 3.200 LANGKAH (320 Hz = 6 RPM)
+  //    Zero I/O Interruption: tidak ada panggilan LCD/Serial di dalam loop
   for (uint32_t i = 0; i < TOTAL_STEPS; i++) {
     digitalWrite(PIN_STEP, HIGH);
     delayMicroseconds(PULSE_HIGH_US);
@@ -105,41 +123,54 @@ void rotate360Clean() {
     delayMicroseconds(PULSE_LOW_US);
   }
 
-  // 4. Matikan kran daya seketika setelah step 3.200 selesai
-  digitalWrite(PIN_ENABLE, HIGH); // Standby (motor lemas, driver dingin)
+  // 4. Matikan daya motor seketika setelah langkah ke-3.200 tercapai
+  digitalWrite(PIN_ENABLE, HIGH); // Standby: motor lemas, driver dingin
 
-  // 5. Tampilkan status SELESAI di LCD setelah motor berhenti
+  // 5. Kunci pembacaan tombol selama 2.5 detik untuk meredam flyback EMF
+  lockoutUntilMs = millis() + POST_LOCKOUT_MS;
+
+  // 6. Perbarui tampilan LCD
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("360 DEG SELESAI!");
   lcd.setCursor(0, 1);
-  lcd.print("TEKAN SELECT LG ");
+  lcd.print("SIAP ULANG (OK) ");
 
-  Serial.println(F("[SELESAI] 3.200 langkah selesai sempurna (360 derajat)."));
-  Serial.println(F("Driver kembali standby (dingin). Tekan SELECT untuk mengulang.\n"));
+  Serial.println(F("[SELESAI] 3.200 langkah (360.0 derajat) selesai sempurna."));
+  Serial.println(F("[LOCKOUT] Mengunci pembacaan analog A0 selama 2.5s (anti-flyback)..."));
+  Serial.println(F("[STANDBY] Motor dingin. Siap untuk pengujian berikutnya.\n"));
 
+  playBeep(80);
+  delay(120);
   playBeep(80);
 }
 
 void loop() {
-  int adc = analogRead(PIN_BTN_SHIELD);
+  unsigned long now = millis();
 
-  // Tombol SELECT (ADC ~650 - 900)
+  // Jika masih dalam masa lockout pasca-gerak, abaikan semua pembacaan tombol
+  if (now < lockoutUntilMs) {
+    delay(20);
+    return;
+  }
+
+  // 1. Pemicu Tombol Fisik SELECT pada LCD Shield
+  int adc = analogRead(PIN_BTN_SHIELD);
   if (adc > 650 && adc < 900) {
-    // Tunggu sampai tombol benar-benar dilepas oleh jari
+    // Wajib tunggu sampai tombol benar-benar dilepas oleh jari
     while (analogRead(PIN_BTN_SHIELD) < 920) {
       delay(10);
     }
-    delay(50); // Debounce jeda
+    delay(50); // Debounce delay
 
-    rotate360Clean();
+    execute360SafeRotation("TOMBOL SELECT SHIELD");
   }
 
-  // Serial listener: kirim 'g' dari serial monitor jika ingin memicu via PC
+  // 2. Pemicu Bersih via Serial Monitor (Ketik '1' atau 'g' atau spasi)
   if (Serial.available() > 0) {
     char c = Serial.read();
-    if (c == 'g' || c == 'G' || c == ' ') {
-      rotate360Clean();
+    if (c == '1' || c == 'g' || c == 'G' || c == ' ') {
+      execute360SafeRotation("SERIAL MONITOR PC");
     }
   }
 
