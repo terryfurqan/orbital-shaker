@@ -115,4 +115,28 @@
   SELECT via mode diag (LEFT). Beban inersia 1.5 kg (CONTEXT.md) belum terpasang —
   ramp akselerasi untuk beban penuh perlu penyesuaian sebelum produksi.
 
+---
+
+### [REV 5.1] - Hardware Diagnostics & Precision Pulse Benchmark (10 & 1000 Steps)
+- **Tanggal/Waktu**: 2026-09-01
+- **Status**: ✅ Kompilasi OK — Siap Uji & Upload.
+- **Latar Belakang & Diagnosis DSH Rev 5.0**:
+  - *Gejala*: Saat tombol SELECT ditekan pada firmware Rev 5.0, motor bersuara/bergerak cepat sesaat tetapi langkahnya hanya sedikit lalu mati.
+  - *Akar Masalah*:
+    1. **Release-Bounce Latch**: Durasi penekanan tombol manusia ($300-500$ ms) melampaui batas lockout 350 ms. Getaran mekanik saat jari diangkat memicu *double-trigger* toggle `STOP`.
+    2. **EMI Coupling pada A0**: Sentakan arus 24V VMOT saat driver aktif memicu ripple tegangan pada jalur analog A0 shield, terbaca sebagai penekanan tombol palsu.
+    3. **Ilusi Kinematika**: Irisan waktu 40 ms di 10 RPM hanya menghasilkan 21 microstep ($2,4^\circ$ rotasi mekanik) sebelum sistem dimatikan oleh *double-trigger*.
+- **Perubahan & Penambahan Sketsa Baru**:
+  1. **`Arduino code/test_10_steps/test_10_steps.ino`**:
+     - Membuktikan gerakan 10 Full Steps ($18^\circ$) yang kasat mata.
+     - Jeda antar langkah 600 ms dengan sinkronisasi audio beep klik pada buzzer.
+     - Debounce murni *wait-for-release* (wajib lepas tombol total sebelum mengeksekusi).
+     - Hasil kompilasi: Flash 4250 bytes (13%), RAM 320 bytes (15%).
+  2. **`Arduino code/test_1000_steps/test_1000_steps.ino`**:
+     - Pembuktian stream 1000 langkah tanpa kendala frekuensi maupun inersia.
+     - **Mode SELECT**: Mengirim 1.000 pulsa microstep ($112,5^\circ \approx 0,3125$ putaran) dalam waktu 0,625 detik.
+     - **Mode UP**: Mengirim 1.000 full steps ($16.000$ pulsa $= 5,0$ putaran penuh) dalam waktu 10,0 detik pada kecepatan 30 RPM.
+     - Dilengkapi *live LCD progress counter* (0–100%) dan auto-standby driver setelah selesai.
+     - Hasil kompilasi: Flash 7474 bytes (23%), RAM 356 bytes (17%).
+
 
